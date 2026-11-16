@@ -1,0 +1,12 @@
+{
+  "name": "sanin-trip-secretary",
+  "private": true,
+  "description": "山陰 4 日自駕像素旅行秘書（網頁 App）",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./css/app.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./css/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

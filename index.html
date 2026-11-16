@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>山陰自駕秘書</title>
+    <meta name="description" content="柴柴領隊：山陰 4 日自駕像素旅行秘書">
+
+    <!-- 網頁 App（加入主畫面） -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#D63E2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="山陰秘書">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+
+    <!-- 字型與圖示（第一次開啟後會被離線快取） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
+    <link rel="stylesheet" href="css/app.css?v=1">
+</head>
+<body class="min-h-screen flex justify-center items-start">
+
+    <!-- Mobile App Container -->
+    <div class="w-full max-w-lg min-h-screen bg-[#FFF8E7] border-x-4 border-[#4A2E1B] flex flex-col justify-between relative pb-28 shadow-2xl">
+        
+        <!-- Unified Sticky Top Container (Prevents overlapping at any font size) -->
+        <div class="sticky top-0 z-30 shadow-md">
+            <!-- Slim, Clean Top Header -->
+            <header class="bg-[#D63E2F] text-white border-b-4 border-[#4A2E1B] px-3.5 py-2.5 safe-top">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <!-- Mini Pixel Shiba Icon in Title -->
+                        <div class="w-7 h-7 bg-[#FCE4B8] border-2 border-[#4A2E1B] rounded flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" viewBox="0 0 16 16" shape-rendering="crispEdges">
+                                <rect x="2" y="1" width="3" height="3" fill="#4A2E1B"/>
+                                <rect x="11" y="1" width="3" height="3" fill="#4A2E1B"/>
+                                <rect x="3" y="3" width="10" height="8" fill="#E07A2E"/>
+                                <rect x="2" y="4" width="12" height="6" fill="#E07A2E"/>
+                                <rect x="5" y="4" width="2" height="1" fill="#FFFFFF"/>
+                                <rect x="9" y="4" width="2" height="1" fill="#FFFFFF"/>
+                                <rect x="4" y="6" width="2" height="2" fill="#231815"/>
+                                <rect x="10" y="6" width="2" height="2" fill="#231815"/>
+                                <rect x="3" y="8" width="10" height="3" fill="#FFFFFF"/>
+                                <rect x="7" y="7" width="2" height="1" fill="#231815"/>
+                                <rect x="4" y="11" width="8" height="2" fill="#D63E2F"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <h1 class="text-[15px] sm:text-lg font-black pixel-font truncate leading-tight">山陰自駕秘書</h1>
+                            <div id="trip-countdown" class="text-[11px] font-bold text-[#FCE4B8] leading-tight truncate"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <!-- Toggle Photos Button -->
+                        <button onclick="togglePhotosVisibility()" id="toggle-photo-btn" class="pixel-btn bg-[#FFF8E7] text-[#2B5B84] w-8 h-8 text-sm font-black flex items-center justify-center" title="切換顯示或隱藏景點照片" aria-label="切換照片">
+                            <i id="toggle-photo-icon" class="fa-solid fa-image"></i>
+                        </button>
+                        <!-- Font Size Toggle Button -->
+                        <button onclick="cycleFontSize()" id="font-size-btn" class="pixel-btn bg-[#F5B041] text-[#4A2E1B] h-8 px-1.5 text-xs font-black pixel-font flex items-center justify-center whitespace-nowrap" title="切換字體大小">
+                            <span id="font-size-label">大字</span>
+                        </button>
+                        <!-- Quick SOS Japanese Card Button -->
+                        <button onclick="openFlashcardModal('walkin4')" class="pixel-btn bg-[#FFF8E7] text-[#D63E2F] h-8 px-1.5 text-xs font-black pixel-font flex items-center gap-1 whitespace-nowrap" title="餐廳4人候位日文卡">
+                            <i class="fa-solid fa-hand-point-up"></i> 入座卡
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Compact Day Selector Tabs (Inside the same sticky wrapper so it NEVER gets covered) -->
+            <div id="sticky-day-bar" class="grid grid-cols-4 gap-2 bg-[#FFF8E7] px-3.5 py-2 border-b-3 border-[#4A2E1B]">
+                <button onclick="selectDay(1)" id="day-btn-1" class="pixel-btn py-1.5 px-1 text-center bg-[#E07A2E] text-white font-bold">
+                    <div class="text-sm pixel-font leading-tight">DAY 1</div>
+                    <div class="text-xs opacity-95">12/4(五)</div>
+                </button>
+                <button onclick="selectDay(2)" id="day-btn-2" class="pixel-btn py-1.5 px-1 text-center bg-white text-[#4A2E1B] font-bold">
+                    <div class="text-sm pixel-font leading-tight">DAY 2</div>
+                    <div class="text-xs opacity-80">12/5(六)</div>
+                </button>
+                <button onclick="selectDay(3)" id="day-btn-3" class="pixel-btn py-1.5 px-1 text-center bg-white text-[#4A2E1B] font-bold">
+                    <div class="text-sm pixel-font leading-tight">DAY 3</div>
+                    <div class="text-xs opacity-80">12/6(日)</div>
+                </button>
+                <button onclick="selectDay(4)" id="day-btn-4" class="pixel-btn py-1.5 px-1 text-center bg-white text-[#4A2E1B] font-bold">
+                    <div class="text-sm pixel-font leading-tight">DAY 4</div>
+                    <div class="text-xs opacity-80">12/7(一)</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-3.5 space-y-3.5">
+
+            <!-- ================= TAB 1: 智慧行程表 (ITINERARY) ================= -->
+            <section id="tab-itinerary" class="space-y-3.5">
+
+                <!-- Dynamic Day Summary Header + Edit Toolbar Integrated -->
+                <div id="day-summary-banner" class="pixel-box bg-[#2B5B84] text-white p-3">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Timeline Container -->
+                <div id="itinerary-timeline" class="space-y-4 relative">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Bottom Add Stop & Reset Toolbar -->
+                <div class="flex gap-2 pt-1">
+                    <button onclick="openAddStopModal()" class="flex-1 pixel-btn bg-[#388E3C] text-white py-2.5 px-3 font-black text-sm pixel-font flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus"></i> 新增景點<span class="hidden" id="bottom-add-day-num">1</span>
+                    </button>
+                    <button onclick="openResetConfirmModal()" class="pixel-btn bg-white text-[#6E472B] py-2.5 px-3 font-bold text-xs pixel-font flex items-center gap-1" title="恢復原設定">
+                        <i class="fa-solid fa-rotate-left"></i> 還原預設
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= TAB 2: 日文手指大字卡 (JAPANESE HELPER) ================= -->
+            <section id="tab-japanese" class="hidden space-y-3.5">
+                <div class="pixel-box bg-[#D63E2F] text-white p-3.5 flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-bold pixel-font flex items-center gap-2">
+                            <i class="fa-solid fa-language"></i> 柴柴日文手指大字卡
+                        </h2>
+                        <p class="text-xs text-white/95 mt-0.5">點卡片可「全螢幕放大」給店員看，或點發音替你說日文！</p>
+                    </div>
+                    <!-- Roaming Translator Shiba SVG -->
+                    <div class="w-12 h-12 bg-[#FFF8E7] border-2 border-[#4A2E1B] rounded p-1 flex items-center justify-center flex-shrink-0 shiba-bounce" title="翻譯官豆助">
+                        <svg class="w-10 h-10" viewBox="0 0 16 16" shape-rendering="crispEdges">
+                            <rect x="2" y="1" width="3" height="3" fill="#4A2E1B"/>
+                            <rect x="11" y="1" width="3" height="3" fill="#4A2E1B"/>
+                            <rect x="3" y="3" width="10" height="8" fill="#E07A2E"/>
+                            <rect x="2" y="4" width="12" height="6" fill="#E07A2E"/>
+                            <rect x="4" y="6" width="2" height="2" fill="#231815"/>
+                            <rect x="10" y="6" width="2" height="2" fill="#231815"/>
+                            <rect x="3" y="8" width="10" height="3" fill="#FFFFFF"/>
+                            <rect x="7" y="8" width="2" height="2" fill="#D63E2F"/>
+                            <rect x="4" y="11" width="8" height="2" fill="#2B5B84"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div class="flex gap-2 overflow-x-auto pb-1.5">
+                    <button onclick="filterJapaneseCards('all')" id="jp-cat-all" class="pixel-btn bg-[#E07A2E] text-white text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">全部實用句</button>
+                    <button onclick="filterJapaneseCards('dining')" id="jp-cat-dining" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">🦀 餐廳無預訂候位/點餐</button>
+                    <button onclick="filterJapaneseCards('car')" id="jp-cat-car" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">🚐 租車/加油/停車</button>
+                    <button onclick="filterJapaneseCards('hotel')" id="jp-cat-hotel" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">♨️ 飯店與神社購物</button>
+                </div>
+
+                <!-- Japanese Phrase Cards Container -->
+                <div id="japanese-cards-list" class="space-y-3.5">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- ================= TAB 3: 免預約美食與神社攻略 (DINING & SHRINE) ================= -->
+            <section id="tab-guide" class="hidden space-y-4">
+                <!-- Toggle between Dining & Shrine -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="switchGuideSubTab('food')" id="guide-btn-food" class="pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font">
+                        🦀 免訂位餐廳攻略
+                    </button>
+                    <button onclick="switchGuideSubTab('shrine')" id="guide-btn-shrine" class="pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-base pixel-font">
+                        ⛩️ 神在月參拜/取沙
+                    </button>
+                </div>
+
+                <!-- SUB-VIEW A: Unreserved Dining Rescue Guide -->
+                <div id="guide-view-food" class="space-y-4">
+                    <div class="pixel-box-cream p-3.5 border-l-8 border-l-[#D63E2F]">
+                        <div class="text-base font-bold text-[#D63E2F] pixel-font mb-1">💡 柴柴提醒：你們 4 人沒有預訂餐廳！</div>
+                        <p class="text-sm text-[#4A2E1B] leading-relaxed font-medium">
+                            日本山陰地區冬天天黑早、部分名店只收現場候位（寫名字排隊）。以下為你們每天用餐時段的<b>「首選與走路/開車 5 分鐘內備案」</b>，每間都能直接開導航或秀「4人入座日文卡」！
+                        </p>
+                    </div>
+
+                    <!-- Day 1 Sakaiminato Dinner -->
+                    <div class="pixel-box p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
+                            <span class="bg-[#2B5B84] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 1 晚餐｜境港市區 (18:30)</span>
+                            <span class="text-sm font-bold text-[#D63E2F]">住：御宿野乃境港</span>
+                        </div>
+                        <p class="text-sm text-[#6E472B] font-medium">⚠️ 注意：境港水產直賣中心下午就關了，晚上在飯店周邊推薦以下免預約好店（21:30 記得回飯店吃免費夜鳴拉麵！）：</p>
+                        
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-black text-base text-[#4A2E1B]">① 廻転すし 北海道 境港店 (超人氣迴轉壽司)</h4>
+                                    <p class="text-sm text-[#6E472B] mt-0.5">山陰必吃高CP值壽司！松葉蟹、紅楚蟹、鳥取和牛握壽司都有，現場抽號碼牌候位。</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=廻転すし北海道+境港店" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
+                            </div>
+                            <div class="text-sm bg-white px-2.5 py-1.5 rounded border border-[#4A2E1B]/30 flex justify-between items-center">
+                                <span>🕒 11:00–21:00 (開車離飯店 6 分鐘)</span>
+                                <button onclick="copyText('0859-47-3711', '北海道壽司境港店電話')" class="text-[#D63E2F] font-bold underline">複製車機電話</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-black text-base text-[#4A2E1B]">② 味処 美佐 (螃蟹・海鮮居酒屋名店)</h4>
+                                    <p class="text-sm text-[#6E472B] mt-0.5">就在御宿野乃境港走路 5 分鐘！冬季有活松葉蟹與紅楚蟹料理，建議 18:18 飯店 Check-in 後直接走去問位子。</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=味処+美佐+境港" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-black text-base text-[#4A2E1B]">③ 和泉 (境港水木茂大道居酒屋)</h4>
+                                    <p class="text-sm text-[#6E472B] mt-0.5">距離御宿野乃走路僅 2 分鐘，生魚片定食、蟹肉可樂餅、關東煮，氣氛溫馨免預約。</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=和泉+境港" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
+                            </div>
+                        </div>
+
+                        <button onclick="openFlashcardModal('walkin4')" class="w-full pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2.5 pixel-font">
+                            🗣️ 秀出「請問 4 位現在有位子嗎？」大字卡
+                        </button>
+                    </div>
+
+                    <!-- Day 2 Izumo Soba Lunch -->
+                    <div class="pixel-box p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
+                            <span class="bg-[#E07A2E] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 2 午餐｜出雲蕎麥麵 (11:56)</span>
+                            <span class="text-sm font-bold text-[#388E3C]">已排入行程第 10 站</span>
+                        </div>
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                            <h4 class="font-black text-base text-[#4A2E1B]">🌟 首選：獻上蕎麥 羽根屋 本店 (天皇蕎麥麵)</h4>
+                            <p class="text-sm text-[#6E472B] leading-relaxed">
+                                <b>現場候位秘訣</b>：羽根屋中午不開放散客預約，抵達後<b>先派 1 人衝進去門口登記簿寫名字（建議寫英文拼音如 LIN，勾選 4 名）</b>，其他人在旁邊停好車（有免費專用停車場）。
+                            </p>
+                            <p class="text-sm font-bold text-[#D63E2F]">
+                                🍜 必點：三段割子そば (三層蕎麥麵) 或 割子そば定食！
+                            </p>
+                            <p class="text-sm text-[#6E472B] pt-1">
+                                🔄 <b>萬一排超過 40 分鐘的備案</b>：直接開車去第 11 站「出雲大社」表參道吃 <b>荒木屋</b>、<b>田中屋</b> 或 <b>砂屋</b>（都在大社門口走路 2 分鐘）。
+                            </p>
+                        </div>
+                        <button onclick="openFlashcardModal('soba')" class="w-full pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2.5 pixel-font">
+                            🗣️ 秀出「三段割子蕎麥麵 + 登記候位」大字卡
+                        </button>
+                    </div>
+
+                    <!-- Day 3 Lunch & Dinner -->
+                    <div class="pixel-box p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
+                            <span class="bg-[#D63E2F] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 3 午晚餐｜柯南小鎮 & 米子海王</span>
+                            <span class="text-sm font-bold text-[#4A2E1B]">12:01 & 15:24</span>
+                        </div>
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-1.5">
+                            <h4 class="font-black text-base text-[#4A2E1B]">☕ 12:01 柯南之家 米花商店街 (第 14 站)</h4>
+                            <p class="text-sm text-[#6E472B] leading-relaxed">
+                                • <b>喫茶ポアロ (白羅咖啡廳)</b>：必點安室透招牌拿坡里義大利麵與火腿三明治（現場抽號碼牌）。<br>
+                                • <b>Conan's Kitchen</b>：咖哩飯與柯南造型漢堡，座位較多。<br>
+                                • <b>香味徳 由良店</b>（車程3分鐘）：鳥取名物「牛骨拉麵」老店！
+                            </p>
+                        </div>
+                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                            <h4 class="font-black text-base text-[#4A2E1B]">🦀 15:24 / 晚餐 米子「海王」與燒肉備案 (第 16 站)</h4>
+                            <p class="text-sm text-[#6E472B] leading-relaxed">
+                                • <b>山陰日本海料理 海王 (角盤町)</b>：活松葉蟹專門店！⚠️ <b>柴柴重要提醒</b>：行程表排 15:24 抵達，但海王下午 <b>14:00~17:00 為午休時間</b>！建議你們 15:30 先去 <b>米子駅前 Super Hotel</b> Check-in 或逛旁邊 <b>AEON Mall 日吉津</b>，17:00 一開門直接去海王問現場位子！<br>
+                                • <b>米子免預約燒肉備案</b>：若海王客滿，推薦去 <b>焼肉・ホルモン 大力家族亭</b> 或 <b>炭火焼肉 屋台さかい 米原店</b>（吃鳥取和牛 オレイン55）！
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                                <a href="https://www.google.com/maps/search/?api=1&query=海王+米子" target="_blank" class="pixel-btn bg-[#2B5B84] text-white text-sm px-3 py-1.5 font-bold">導航：海王</a>
+                                <a href="https://www.google.com/maps/search/?api=1&query=大力家族亭+米子" target="_blank" class="pixel-btn bg-[#D63E2F] text-white text-sm px-3 py-1.5 font-bold">備案：大力家族亭燒肉</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VIEW B: Shrine & Goshuin Guide -->
+                <div id="guide-view-shrine" class="hidden space-y-4">
+                    <div class="pixel-box bg-[#FFF0EE] p-4 space-y-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-3xl">⛩️</span>
+                            <div>
+                                <h3 class="font-bold text-base text-[#D63E2F] pixel-font">出雲大社「二禮、四拍手、一禮」</h3>
+                                <p class="text-sm text-[#4A2E1B] mt-0.5">一般日本神社是拍手 2 下，但<b>出雲大社與萬九千神社</b>參拜時要<b>拍手 4 下（四拍手）</b>喔！</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sand Ritual Step-by-Step Card -->
+                    <div class="pixel-box p-4 space-y-3">
+                        <h3 class="font-bold text-base text-[#4A2E1B] pixel-font flex items-center gap-1.5">
+                            <span class="bg-[#E07A2E] text-white px-2 py-0.5 rounded text-sm">Day 2 必做</span>
+                            出雲大社「稻佐之濱 ➔ 素鵞社」換沙全攻略
+                        </h3>
+                        <p class="text-sm text-[#6E472B] leading-relaxed">
+                            你們的新行程在 Day 2 13:17 去出雲大社！強烈建議在去出雲大社前（或剛抵達時），順路開 3 分鐘到海邊的<b>「稻佐之濱（弁天島）」</b>抓一小袋沙子再去參拜：
+                        </p>
+                        <div class="space-y-2.5 text-sm">
+                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
+                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 1</span>
+                                <span>在<b>稻佐之濱（弁天島前）</b>用預先帶的小夾鏈袋裝一點海沙。</span>
+                            </div>
+                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
+                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 2</span>
+                                <span>先參拜<b>出雲大社拜殿與八足門（御本殿）</b>，再逆時針走到最裡面的<b>「素鵞社（そがのやしろ）」</b>（大國主大神的父神素戔嗚尊）。</span>
+                            </div>
+                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
+                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 3</span>
+                                <span>把帶來的海沙倒進素鵞社左右側的木箱奉納，接著<b>拿旁邊的小木杓，舀取箱內已經過神明祈福的乾沙（換比你帶來更少一點的量）</b>帶回家鎮宅保平安！</span>
+                            </div>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=稲佐の浜" target="_blank" class="block text-center pixel-btn bg-[#2B5B84] text-white text-sm py-2.5 font-bold pixel-font">
+                            📍 開啟「稻佐之濱」Google 導航 (離出雲大社僅 3 分鐘)
+                        </a>
+                    </div>
+
+                    <!-- Mankusen Jinja Card -->
+                    <div class="pixel-box p-4 space-y-2">
+                        <h3 class="font-bold text-base text-[#4A2E1B] pixel-font">🦌 Day 2 (11:18) 萬九千神社 (神在月送神之地)</h3>
+                        <p class="text-sm text-[#6E472B] leading-relaxed">
+                            全國八百萬神明在出雲開完會後，最後聚餐（直會）與道別的神社！記得抽可愛的「神在みくじ」與領取限定御朱印。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 4: 租車與憑證夾 (VOUCHERS & CAR) ================= -->
+            <section id="tab-voucher" class="hidden space-y-4">
+                <!-- Car Rental Card (Toyota VOXY Hybrid) -->
+                <div class="pixel-box p-4 space-y-3.5 bg-white">
+                    <div class="flex items-center justify-between border-b-2 border-[#4A2E1B] pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-[#388E3C] text-white px-2.5 py-1 rounded text-sm font-bold pixel-font">TOYOTA 租車確認單</span>
+                            <span class="text-sm font-bold text-[#388E3C]">✔ 已結清</span>
+                        </div>
+                        <span class="text-base font-mono font-black text-[#4A2E1B]">¥67,606</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-sm bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B]">
+                        <div>
+                            <div class="text-xs text-[#6E472B] font-bold">預訂車型 (指定)</div>
+                            <div class="font-black text-[#D63E2F] text-base">VOXY Hybrid (W2)</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[#6E472B] font-bold">冬季配備 & 保險</div>
+                            <div class="font-bold text-[#388E3C]">含雪胎 + Full 全險</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[#6E472B] font-bold">取車時間 (米子機場)</div>
+                            <div class="font-bold">12/04 (五) 17:30</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[#6E472B] font-bold">還車時間 (米子機場)</div>
+                            <div class="font-bold">12/07 (一) 09:31</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#FFF0EE] border-2 border-[#D63E2F] p-3 rounded text-sm space-y-2">
+                        <div class="font-bold text-[#D63E2F] flex items-center gap-1.5 text-base">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 取車必備與 4 人大行李秘訣：
+                        </div>
+                        <ul class="list-disc list-inside text-[#4A2E1B] space-y-1.5 font-medium">
+                            <li>駕駛人必帶：<b>台灣駕照正本 + 日文譯本 + 護照</b>（缺一不可！）</li>
+                            <li>VOXY 為三排座椅，取車時請店員<b>「幫忙把第 3 排座椅收起來」</b>，才放得下 4 個 28 吋行李箱！</li>
+                        </ul>
+                        <button onclick="openFlashcardModal('foldseat')" class="w-full mt-1 pixel-btn bg-[#D63E2F] text-white font-bold py-2 text-sm pixel-font">
+                            🗣️ 點此秀出「請幫我們收起第三排座椅」日文卡
+                        </button>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a href="https://www.google.com/maps/search/?api=1&query=トヨタレンタカー米子鬼太郎空港店" target="_blank" class="flex-1 text-center pixel-btn bg-[#2B5B84] text-white text-sm py-2.5 font-bold pixel-font">
+                            📍 導航 TOYOTA 機場店
+                        </a>
+                        <button onclick="openFlashcardModal('gas')" class="flex-1 text-center pixel-btn bg-[#F5B041] text-[#4A2E1B] text-sm py-2.5 font-bold pixel-font">
+                            ⛽ 加油「紅色Regular」卡
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Flights Info Card -->
+                <div class="pixel-box p-4 space-y-3">
+                    <h3 class="font-bold text-base pixel-font flex items-center gap-2 text-[#4A2E1B]">
+                        <i class="fa-solid fa-plane-departure text-[#E07A2E]"></i> 台灣虎航航班 & 桃園停車資訊
+                    </h3>
+                    <div class="space-y-2.5 text-sm">
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] flex justify-between items-center">
+                            <div>
+                                <span class="bg-[#E07A2E] text-white px-2 py-0.5 rounded font-bold text-xs">去程 12/4 (五)</span>
+                                <span class="font-bold ml-1 text-base">虎航 IT724 (桃機 T1)</span>
+                                <div class="text-[#6E472B] mt-1">09:30 桃大源社區 ➔ 11:01 大園出國停車場</div>
+                            </div>
+                            <div class="text-right font-mono font-black text-base text-[#D63E2F]">13:25<br>⬇<br>16:50</div>
+                        </div>
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] flex justify-between items-center">
+                            <div>
+                                <span class="bg-[#2B5B84] text-white px-2 py-0.5 rounded font-bold text-xs">回程 12/7 (一)</span>
+                                <span class="font-bold ml-1 text-base">虎航 IT725 (米子 YGJ)</span>
+                                <div class="text-[#6E472B] mt-1">09:31 還車 ➔ 10:00 抵達米子機場</div>
+                            </div>
+                            <div class="text-right font-mono font-black text-base text-[#2B5B84]">13:00<br>⬇<br>15:20</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Nights Hotels Summary -->
+                <div class="pixel-box p-4 space-y-3">
+                    <h3 class="font-bold text-base pixel-font flex items-center gap-2 text-[#4A2E1B]">
+                        <i class="fa-solid fa-bed text-[#D63E2F]"></i> 三晚住宿憑證與車機電話
+                    </h3>
+                    <div class="space-y-2.5 text-sm">
+                        <!-- Hotel 1 -->
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="font-black text-base text-[#D63E2F]">Day 1 (12/4)：御宿 野乃 境港</span>
+                                <button onclick="copyText('0859-44-5489', '御宿野乃境港 車機電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
+                            </div>
+                            <div class="text-[#6E472B] font-medium">📍 鳥取県境港市大正町216 ｜ ☎️ 0859-44-5489</div>
+                            <div class="text-xs text-[#388E3C] font-bold">🍜 全館榻榻米免穿鞋、21:30~23:00 免費夜鳴拉麵</div>
+                        </div>
+                        <!-- Hotel 2 -->
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="font-black text-base text-[#D63E2F]">Day 2 (12/5)：星野集團 界 出雲</span>
+                                <button onclick="copyText('0853-54-5600', '界 出雲 車機電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
+                            </div>
+                            <div class="text-[#6E472B] font-medium">📍 島根県出雲市大社町日御碕604 ｜ ☎️ 0853-54-5600</div>
+                            <div class="text-xs text-[#388E3C] font-bold">🌅 15:37 抵達泡湯、看日本海夕陽、松葉蟹會席＋石見神樂</div>
+                        </div>
+                        <!-- Hotel 3 -->
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="font-black text-base text-[#D63E2F]">Day 3 (12/6)：Super Hotel 米子駅前</span>
+                                <button onclick="copyText('0859-32-9000', 'Super Hotel 米子駅前 電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
+                            </div>
+                            <div class="text-[#6E472B] font-medium">📍 鳥取県米子市万能町112 ｜ ☎️ 0859-32-9000</div>
+                            <div class="text-xs text-[#388E3C] font-bold">♨️ 附天然溫泉「大山之湯」與免費健康早餐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driving Tips -->
+                <div class="pixel-box p-4 space-y-3">
+                    <h3 class="font-bold text-base pixel-font flex items-center gap-2 text-[#4A2E1B]">
+                        <i class="fa-solid fa-road text-[#2B5B84]"></i> 日本開車 7 個重點
+                    </h3>
+                    <ul class="text-sm text-[#4A2E1B] space-y-2 font-medium">
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">🚦 <b>靠左開</b>：右轉要等對向直行車過完；方向燈和雨刷桿跟台灣相反，打錯一直刷雨刷很正常。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">🛑 <b>「止まれ」倒三角紅牌</b>：一定要完全停住、數 3 秒再走，日本警察很常抓。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">❄️ <b>12 月山陰可能結冰</b>：早上的橋面、山路、隧道出口最滑，減速、拉長車距。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">🍺 <b>酒駕零容忍</b>：駕駛一滴都不能喝，同車知情乘客也會被罰。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">🚸 <b>行人優先</b>：斑馬線上有人要過就一定要停，轉彎時特別注意。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">📞 <b>車機導航</b>：日本導航可直接輸入「電話號碼」設定目的地，行程卡上的電話都能一鍵複製。</li>
+                        <li class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B]">🔦 <b>天黑很早</b>：12 月山陰約 17:00 就天黑，盡量把長途山路排在白天。</li>
+                    </ul>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div class="pixel-box-red p-4 space-y-3">
+                    <h3 class="font-bold text-base pixel-font flex items-center gap-2 text-[#D63E2F]">
+                        <i class="fa-solid fa-truck-medical"></i> 緊急電話（點一下直接撥打）
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <a href="tel:110" class="pixel-btn bg-white text-[#4A2E1B] p-2.5 font-bold block"><div class="text-xl font-mono font-black text-[#2B5B84]">110</div>警察（車禍也打）</a>
+                        <a href="tel:119" class="pixel-btn bg-white text-[#4A2E1B] p-2.5 font-bold block"><div class="text-xl font-mono font-black text-[#D63E2F]">119</div>救護車／火警</a>
+                        <a href="tel:#8139" class="pixel-btn bg-white text-[#4A2E1B] p-2.5 font-bold block"><div class="text-xl font-mono font-black text-[#E07A2E]">#8139</div>JAF 道路救援（爆胎、沒電）</a>
+                        <a href="tel:050-3816-2787" class="pixel-btn bg-white text-[#4A2E1B] p-2.5 font-bold block"><div class="text-base font-mono font-black text-[#388E3C]">050-3816-2787</div>日本觀光局 24h 中文熱線</a>
+                    </div>
+                    <a href="tel:090-8794-4568" class="pixel-btn bg-white text-[#4A2E1B] p-2.5 font-bold text-sm block">
+                        <div class="flex justify-between items-center gap-2">
+                            <span>🇹🇼 台北駐大阪經濟文化辦事處<br><span class="text-xs text-[#6E472B]">鳥取、島根屬大阪辦事處轄區・護照遺失／急難救助</span></span>
+                            <span class="font-mono font-black text-[#D63E2F] whitespace-nowrap">090-8794-4568</span>
+                        </div>
+                    </a>
+                    <p class="text-xs text-[#6E472B] font-medium">💡 車禍就算很輕微也要報警（110），否則租車保險不理賠。租車公司 TOYOTA 機場店：<a href="tel:0859-47-0100" class="underline font-bold">0859-47-0100</a></p>
+                </div>
+            </section>
+
+            <!-- ================= TAB 5: 4人分帳本 & 清單 (SPLIT BILL & CHECKLIST) ================= -->
+            <section id="tab-expense" class="hidden space-y-4">
+                <!-- Sub-switch: Expense vs Checklist -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="switchExpenseSubTab('bill')" id="exp-btn-bill" class="pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font">
+                        💰 4人自駕分帳本
+                    </button>
+                    <button onclick="switchExpenseSubTab('check')" id="exp-btn-check" class="pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-base pixel-font">
+                        ❄️ 行前與隨身清單
+                    </button>
+                </div>
+
+                <!-- SUB-VIEW 1: 4-Person Expense Splitter -->
+                <div id="exp-view-bill" class="space-y-4">
+                    <!-- Summary Dashboard -->
+                    <div class="pixel-box bg-[#4A2E1B] text-white p-4 space-y-2.5">
+                        <div class="flex justify-between items-center flex-wrap gap-2">
+                            <span class="text-sm text-[#F5B041] pixel-font">📊 4人統計 (匯率 <input id="fx-rate-input" type="number" step="0.001" value="0.215" onchange="updateExpenseUI()" class="w-16 bg-[#2C221E] text-[#F5B041] border border-[#F5B041] rounded px-1 text-center font-mono text-sm">)</span>
+                            <button onclick="exportExpensesToLine()" class="pixel-btn bg-[#388E3C] text-white text-xs px-2.5 py-1 font-bold pixel-font">
+                                📋 複製 LINE 結算表
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5 pt-1">
+                            <div class="bg-[#2C221E] p-2.5 rounded border border-white/20">
+                                <div class="text-xs text-gray-300">日幣總計 (JPY)</div>
+                                <div id="total-jpy" class="text-xl font-mono font-bold text-[#F5B041]">¥0</div>
+                            </div>
+                            <div class="bg-[#2C221E] p-2.5 rounded border border-white/20">
+                                <div class="text-xs text-gray-300">每人平均 (約 TWD)</div>
+                                <div id="per-person-twd" class="text-xl font-mono font-bold text-[#4CAF50]">NT$ 0</div>
+                            </div>
+                        </div>
+                        <!-- Settlement Advice -->
+                        <div id="settlement-box" class="text-sm bg-[#2C221E] p-2.5 rounded border border-[#F5B041]/40 space-y-1.5">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Customize 4 Member Names -->
+                    <div class="pixel-box-cream p-3">
+                        <div class="text-sm font-bold mb-2 pixel-font text-[#4A2E1B]">👥 設定 4 位旅伴暱稱 (點選直接修改)：</div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="member-names-inputs">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Add New Expense Form -->
+                    <div class="pixel-box p-3.5 space-y-3">
+                        <h4 class="font-bold text-sm pixel-font text-[#D63E2F]">➕ 新增一筆旅費 (自動存入手機)</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input id="exp-title" type="text" placeholder="項目 (如: 羽根屋蕎麥麵)" class="border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-bold focus:outline-none">
+                            <input id="exp-amount" type="number" placeholder="日幣金額 (JPY)" class="border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-mono font-bold focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <select id="exp-payer" class="border-2 border-[#4A2E1B] rounded px-2.5 py-2 text-sm bg-[#FFF8E7] font-bold">
+                                <!-- Populated via JS -->
+                            </select>
+                            <button onclick="addExpense()" class="pixel-btn bg-[#E07A2E] text-white font-bold text-sm py-2 pixel-font">
+                                記帳汪！
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Expense History List -->
+                    <div id="expense-list" class="space-y-2.5">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- SUB-VIEW 2: Checklist -->
+                <div id="exp-view-check" class="hidden space-y-3.5">
+                    <div class="pixel-box p-4 space-y-3">
+                        <div class="flex justify-between items-center gap-2">
+                            <h3 class="font-bold text-base text-[#D63E2F] pixel-font">🛂 自駕與神在月必備物品清單</h3>
+                            <span id="checklist-count" class="text-sm font-mono font-black text-[#388E3C] whitespace-nowrap"></span>
+                        </div>
+                        <div class="pixel-progress"><i id="checklist-bar" style="width:0%"></i></div>
+                        <div id="packing-checklist" class="space-y-2.5">
+                            <!-- Populated via JS -->
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                            <input id="check-new-item" type="text" placeholder="自己加一項，例如：行動電源" onkeydown="if(event.key==='Enter')addCheckItem()" class="flex-1 min-w-0 border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-bold focus:outline-none">
+                            <button onclick="addCheckItem()" class="pixel-btn bg-[#388E3C] text-white px-3 py-2 font-bold text-sm pixel-font whitespace-nowrap">➕ 加入</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ================= FLOATING SHIBA ASSISTANT (BOTTOM-RIGHT) ================= -->
+        <div class="fixed bottom-20 right-3 z-40 flex flex-col items-end pointer-events-none safe-fab">
+            
+            <!-- Collapsible Shiba Helper Speech Popover -->
+            <div id="shiba-popover" class="hidden pointer-events-auto mb-2.5 w-72 sm:w-80 pixel-box bg-[#FFF8E7] p-3.5 border-3 border-[#4A2E1B] shadow-2xl shiba-popup-enter">
+                <div class="flex items-center justify-between border-b-2 border-[#4A2E1B]/20 pb-2 mb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="bg-[#D63E2F] text-white text-xs font-black px-2 py-0.5 rounded pixel-font">🐕 柴柴隨身小幫手</span>
+                        <button onclick="pokeShiba()" class="text-xs bg-[#FCE4B8] text-[#4A2E1B] px-2 py-0.5 rounded border border-[#4A2E1B] font-bold hover:bg-[#F5B041]">換一句提示</button>
+                    </div>
+                    <button onclick="toggleShibaPopover(false)" class="text-[#4A2E1B] font-black px-1.5 py-0.5 text-sm hover:text-[#D63E2F]">✕</button>
+                </div>
+
+                <!-- Dynamic Context Tip -->
+                <p id="shiba-dialogue" class="text-sm leading-relaxed font-bold text-[#4A2E1B] bg-white p-2.5 rounded border-2 border-[#4A2E1B] mb-2.5">
+                    汪！我現在收納在右下角囉！隨時點我都可以叫出「日文急救卡」或新增行程汪！
+                </p>
+
+                <!-- Quick Action Shortcuts Inside Shiba Helper -->
+                <div class="grid grid-cols-2 gap-1.5 text-xs">
+                    <button onclick="openFlashcardModal('walkin4'); toggleShibaPopover(false);" class="pixel-btn bg-[#D63E2F] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        🦀 4人沒訂位卡
+                    </button>
+                    <button onclick="openFlashcardModal('foldseat'); toggleShibaPopover(false);" class="pixel-btn bg-[#2B5B84] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        🚐 收第3排椅卡
+                    </button>
+                    <button onclick="openAddStopModal(); toggleShibaPopover(false);" class="pixel-btn bg-[#388E3C] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        ➕ 新增今日景點
+                    </button>
+                    <button onclick="openFlashcardModal('gas'); toggleShibaPopover(false);" class="pixel-btn bg-[#F5B041] text-[#4A2E1B] py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        ⛽ 紅色油槍加滿
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating Shiba Avatar Button (Bottom Right) -->
+            <button onclick="toggleShibaPopover()" id="shiba-fab-btn" class="pointer-events-auto group relative flex items-center gap-1.5 bg-[#FFF8E7] hover:bg-[#FCE4B8] border-3 border-[#4A2E1B] rounded-full p-1.5 pr-3 shadow-[4px_4px_0px_#4A2E1B] active:translate-y-0.5 transition-all">
+                <!-- Notification Dot -->
+                <span id="shiba-notif-dot" class="absolute -top-1 -left-1 w-3.5 h-3.5 bg-[#D63E2F] border-2 border-[#4A2E1B] rounded-full animate-ping"></span>
+                <span class="absolute -top-1 -left-1 w-3.5 h-3.5 bg-[#D63E2F] border-2 border-[#4A2E1B] rounded-full"></span>
+
+                <!-- 16-bit Pixel Shiba Avatar -->
+                <div class="w-11 h-11 bg-[#FCE4B8] border-2 border-[#4A2E1B] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <svg id="shiba-svg" class="w-9 h-9 shiba-bounce" viewBox="0 0 16 16" shape-rendering="crispEdges">
+                        <!-- Ears -->
+                        <rect x="2" y="1" width="3" height="3" fill="#4A2E1B"/>
+                        <rect x="3" y="2" width="1" height="2" fill="#E07A2E"/>
+                        <rect x="11" y="1" width="3" height="3" fill="#4A2E1B"/>
+                        <rect x="12" y="2" width="1" height="2" fill="#E07A2E"/>
+                        <!-- Head -->
+                        <rect x="3" y="3" width="10" height="8" fill="#E07A2E"/>
+                        <rect x="2" y="4" width="12" height="6" fill="#E07A2E"/>
+                        <!-- White Eyebrows -->
+                        <rect x="5" y="4" width="2" height="1" fill="#FFFFFF"/>
+                        <rect x="9" y="4" width="2" height="1" fill="#FFFFFF"/>
+                        <!-- Eyes -->
+                        <rect x="4" y="6" width="2" height="2" fill="#231815"/>
+                        <rect x="4" y="6" width="1" height="1" fill="#FFFFFF"/>
+                        <rect x="10" y="6" width="2" height="2" fill="#231815"/>
+                        <rect x="10" y="6" width="1" height="1" fill="#FFFFFF"/>
+                        <!-- Cheeks -->
+                        <rect x="3" y="8" width="10" height="3" fill="#FFFFFF"/>
+                        <rect x="5" y="7" width="6" height="4" fill="#FFFFFF"/>
+                        <rect x="3" y="7" width="1" height="1" fill="#FF8A80"/>
+                        <rect x="12" y="7" width="1" height="1" fill="#FF8A80"/>
+                        <!-- Nose & Happy Mouth -->
+                        <rect x="7" y="7" width="2" height="1" fill="#231815"/>
+                        <rect x="7" y="8" width="2" height="1" fill="#E57373"/>
+                        <rect x="6" y="8" width="1" height="1" fill="#231815"/>
+                        <rect x="9" y="8" width="1" height="1" fill="#231815"/>
+                        <!-- Red Scarf & Bell -->
+                        <rect x="4" y="11" width="8" height="2" fill="#D63E2F"/>
+                        <rect x="7" y="12" width="2" height="2" fill="#F5B041"/>
+                    </svg>
+                </div>
+                <div class="text-left">
+                    <div class="text-xs font-black text-[#4A2E1B] pixel-font leading-none">柴柴幫手</div>
+                    <div id="shiba-fab-status" class="text-[11px] font-bold text-[#D63E2F] leading-tight mt-0.5">點我問問題</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Bottom RPG App Navigation Bar -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg bg-[#4A2E1B] border-t-4 border-[#E07A2E] px-2 pt-2 safe-bottom z-40 grid grid-cols-5 gap-1">
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="flex flex-col items-center justify-center py-1.5 rounded bg-[#E07A2E] text-white transition-all">
+                <i class="fa-solid fa-map-location-dot text-lg"></i>
+                <span class="text-xs font-bold pixel-font mt-0.5">行程</span>
+            </button>
+            <button onclick="switchTab('japanese')" id="nav-japanese" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all relative">
+                <span class="absolute -top-1 right-1 bg-[#D63E2F] text-white text-[10px] px-1.5 rounded-full font-bold">救星</span>
+                <i class="fa-solid fa-comments text-lg"></i>
+                <span class="text-xs font-bold pixel-font mt-0.5">日文卡</span>
+            </button>
+            <button onclick="switchTab('guide')" id="nav-guide" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all">
+                <i class="fa-solid fa-utensils text-lg"></i>
+                <span class="text-xs font-bold pixel-font mt-0.5">美食神社</span>
+            </button>
+            <button onclick="switchTab('voucher')" id="nav-voucher" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all">
+                <i class="fa-solid fa-car text-lg"></i>
+                <span class="text-xs font-bold pixel-font mt-0.5">租車憑證</span>
+            </button>
+            <button onclick="switchTab('expense')" id="nav-expense" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all">
+                <i class="fa-solid fa-coins text-lg"></i>
+                <span class="text-xs font-bold pixel-font mt-0.5">分帳清單</span>
+            </button>
+        </nav>
+
+        <!-- ================= MODAL 1: EDIT / ADD ITINERARY STOP MODAL ================= -->
+        <div id="edit-stop-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-3 overflow-y-auto">
+            <div class="w-full max-w-md pixel-box bg-[#FFF8E7] p-4 space-y-3.5 border-4 border-[#E07A2E] my-auto">
+                <div class="flex justify-between items-center border-b-2 border-[#4A2E1B] pb-2">
+                    <span id="edit-modal-title" class="bg-[#E07A2E] text-white text-base font-bold px-3 py-1 rounded pixel-font">✏️ 編輯行程景點</span>
+                    <button onclick="closeEditStopModal()" class="pixel-btn bg-[#4A2E1B] text-white px-3 py-1 text-sm font-bold">✕ 關閉</button>
+                </div>
+
+                <div class="space-y-3 text-sm max-h-[70vh] overflow-y-auto pr-1">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">🕒 預計抵達時間</label>
+                            <input id="edit-stop-time" type="text" placeholder="例如 11:56" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-mono font-bold text-base">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">⏳ 停留時間</label>
+                            <input id="edit-stop-stay" type="text" placeholder="例如 停留 1 小時" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-bold text-base">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-[#4A2E1B] mb-1">📍 景點 / 餐廳名稱</label>
+                        <input id="edit-stop-name" type="text" placeholder="輸入景點或餐廳名稱" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-bold text-base">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">🏷️ 標籤分類</label>
+                            <input id="edit-stop-tag" type="text" placeholder="如：午餐、神社" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">☎️ 車機導航電話(選填)</label>
+                            <input id="edit-stop-tel" type="text" placeholder="如：0853-53-3100" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-mono font-bold">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-[#4A2E1B] mb-1">🗺️ 地址或 Google 導航關鍵字</label>
+                        <input id="edit-stop-address" type="text" placeholder="輸入地址或店名即可直接導航" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-medium">
+                    </div>
+
+                    <div class="bg-white p-3 rounded border-2 border-[#4A2E1B] space-y-2">
+                        <label class="block font-bold text-[#D63E2F] flex items-center justify-between">
+                            <span>📸 景點照片 (可上傳手機相片或貼網址)</span>
+                            <button type="button" onclick="clearEditStopPhoto()" class="text-xs text-gray-500 underline">移除照片</button>
+                        </label>
+                        
+                        <!-- Photo Preview in Modal -->
+                        <div id="edit-photo-preview-wrap" class="hidden relative rounded overflow-hidden border-2 border-[#4A2E1B] h-36 bg-[#2C221E]">
+                            <img id="edit-photo-preview" src="" alt="預覽圖" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <label class="flex-1 pixel-btn bg-[#2B5B84] text-white py-2 px-3 text-xs font-bold pixel-font text-center cursor-pointer flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-camera"></i> 從手機相簿選照片
+                                <input id="edit-stop-file" type="file" accept="image/*" class="hidden" onchange="handleStopPhotoUpload(event)">
+                            </label>
+                        </div>
+                        <input id="edit-stop-img" type="text" placeholder="或貼上圖片網址 (https://...)" oninput="updateEditPhotoPreview(this.value)" class="w-full border-2 border-[#4A2E1B] rounded px-2.5 py-1.5 bg-[#FFF8E7] text-xs font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-[#4A2E1B] mb-1">📝 行程筆記 & 提醒備註</label>
+                        <textarea id="edit-stop-note" rows="3" placeholder="輸入必吃美食、停車資訊或注意事項..." class="w-full border-2 border-[#4A2E1B] rounded p-2.5 bg-white font-medium"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">🚗 往下一站車程(選填)</label>
+                            <input id="edit-stop-drive" type="text" placeholder="如：🚗 約 20 分" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[#4A2E1B] mb-1">☑️ 打卡任務(選填)</label>
+                            <input id="edit-stop-task" type="text" placeholder="如：稻佐之濱取沙" class="w-full border-2 border-[#4A2E1B] rounded px-3 py-2 bg-white font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-2 border-t-2 border-[#4A2E1B]">
+                    <button id="delete-stop-btn" onclick="deleteCurrentStop()" class="pixel-btn bg-[#D63E2F] text-white px-3.5 py-2.5 font-bold text-sm pixel-font">
+                        🗑️ 刪除此站
+                    </button>
+                    <button onclick="saveStopChanges()" class="flex-1 pixel-btn bg-[#388E3C] text-white py-2.5 font-bold text-base pixel-font">
+                        💾 儲存行程修改
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODAL 2: RESET CONFIRMATION MODAL ================= -->
+        <div id="reset-confirm-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-4">
+            <div class="w-full max-w-sm pixel-box bg-[#FFF8E7] p-5 space-y-4 border-4 border-[#D63E2F]">
+                <h3 class="text-lg font-black text-[#D63E2F] pixel-font">⚠️ 確定要還原預設行程嗎？</h3>
+                <p class="text-sm text-[#4A2E1B] font-medium leading-relaxed">
+                    這會將 Day 1 ~ Day 4 的行程恢復為最初的 23 個景點版本，您手動新增或修改的景點將會被覆蓋喔！
+                </p>
+                <div class="flex gap-2.5">
+                    <button onclick="closeResetConfirmModal()" class="flex-1 pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-sm pixel-font">取消</button>
+                    <button onclick="confirmResetItinerary()" class="flex-1 pixel-btn bg-[#D63E2F] text-white py-2.5 font-bold text-sm pixel-font">確定還原</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODAL 3: Fullscreen Japanese Point-and-Speak Modal ================= -->
+        <div id="flashcard-modal" class="fixed inset-0 bg-black/85 z-50 hidden flex-col items-center justify-center p-4">
+            <div class="w-full max-w-md pixel-box bg-[#FFF8E7] p-5 space-y-4 relative border-4 border-[#E07A2E]">
+                <div class="flex justify-between items-center border-b-2 border-[#4A2E1B] pb-2">
+                    <span class="bg-[#D63E2F] text-white text-sm font-bold px-3 py-1 rounded pixel-font">🇯🇵 請出示給日本店員看</span>
+                    <button onclick="closeFlashcardModal()" class="pixel-btn bg-[#4A2E1B] text-white px-3 py-1 text-sm font-bold">✕ 關閉</button>
+                </div>
+
+                <!-- Chinese Meaning for Traveler -->
+                <div id="modal-zh" class="text-sm font-bold text-[#6E472B] bg-white px-3 py-2 rounded border border-[#4A2E1B]"></div>
+
+                <!-- Giant Japanese Text for Staff -->
+                <div class="bg-white border-4 border-[#4A2E1B] rounded-lg p-5 text-center space-y-3 shadow-inner">
+                    <div id="modal-jp" class="text-2xl sm:text-3xl font-black text-[#231815] leading-snug tracking-wide"></div>
+                    <div id="modal-romaji" class="text-sm text-[#D63E2F] font-mono font-bold"></div>
+                </div>
+
+                <!-- Extra Polite Note for Staff in Japanese -->
+                <div class="text-center text-sm text-[#4A2E1B] font-bold">
+                    🙇‍♂️ 台湾からの旅行者です。日本語があまり話せません。ありがとうございます！
+                </div>
+
+                <!-- Speak Aloud Button -->
+                <div class="flex gap-2 pt-1">
+                    <button id="modal-speak-btn" class="flex-1 pixel-btn bg-[#388E3C] text-white py-3 font-bold text-base pixel-font flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-volume-high text-xl"></i> 點擊播放日文語音
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODAL 4: FULLSCREEN PHOTO LIGHTBOX MODAL ================= -->
+        <div id="photo-lightbox-modal" onclick="closePhotoLightbox()" class="fixed inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center p-3">
+            <div class="w-full max-w-lg pixel-box bg-[#FFF8E7] p-3 space-y-2.5 border-4 border-[#F5B041]" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center border-b-2 border-[#4A2E1B] pb-2">
+                    <span id="lightbox-title" class="font-black text-base text-[#4A2E1B] truncate pr-2">📸 景點照片</span>
+                    <button onclick="closePhotoLightbox()" class="pixel-btn bg-[#D63E2F] text-white px-3 py-1 text-xs font-bold whitespace-nowrap">✕ 關閉</button>
+                </div>
+                <div class="bg-[#231815] rounded border-2 border-[#4A2E1B] overflow-hidden max-h-[65vh] flex items-center justify-center">
+                    <img id="lightbox-img" src="" referrerpolicy="no-referrer" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}" alt="景點放大圖" class="w-full h-auto max-h-[65vh] object-contain">
+                </div>
+                <div class="flex justify-between items-center text-xs text-[#6E472B] font-bold pt-1">
+                    <span id="lightbox-caption">💡 點擊景點的「✏️ 編輯」可更換成自己拍的照片喔！</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Toast Notification (No alert() allowed) -->
+        <div id="pixel-toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#4A2E1B] text-[#F5B041] border-2 border-[#F5B041] px-4 py-2.5 rounded shadow-lg text-sm font-bold pixel-font z-50 hidden items-center gap-2">
+            <span>🐕</span>
+            <span id="pixel-toast-msg">已複製！</span>
+        </div>
+
+    </div>
+
+    <script src="js/app.js?v=1"></script>
+</body>
+</html>
