@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=2">
+    <link rel="stylesheet" href="css/app.css?v=3">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -157,173 +157,16 @@
                 </div>
             </section>
 
-            <!-- ================= TAB 3: 免預約美食與神社攻略 (DINING & SHRINE) ================= -->
+            <!-- ================= TAB 3: 美食・購物・備案景點（內容由 js/app.js 的 GUIDE_DATA 產生） ================= -->
             <section id="tab-guide" class="hidden space-y-4">
-                <!-- Toggle between Dining & Shrine -->
-                <div class="grid grid-cols-2 gap-2.5">
-                    <button onclick="switchGuideSubTab('food')" id="guide-btn-food" class="pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font">
-                        🦀 免訂位餐廳攻略
-                    </button>
-                    <button onclick="switchGuideSubTab('shrine')" id="guide-btn-shrine" class="pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-base pixel-font">
-                        ⛩️ 神在月參拜/取沙
-                    </button>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="switchGuideSubTab('food')" id="guide-btn-food" class="pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-sm pixel-font">🍜 周邊美食</button>
+                    <button onclick="switchGuideSubTab('shop')" id="guide-btn-shop" class="pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-sm pixel-font">🛍️ 購物</button>
+                    <button onclick="switchGuideSubTab('spot')" id="guide-btn-spot" class="pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-sm pixel-font">🗺️ 備案景點</button>
                 </div>
-
-                <!-- SUB-VIEW A: Unreserved Dining Rescue Guide -->
-                <div id="guide-view-food" class="space-y-4">
-                    <div class="pixel-box-cream p-3.5 border-l-8 border-l-[#D63E2F]">
-                        <div class="text-base font-bold text-[#D63E2F] pixel-font mb-1">💡 柴柴提醒：你們 4 人沒有預訂餐廳！</div>
-                        <p class="text-sm text-[#4A2E1B] leading-relaxed font-medium">
-                            日本山陰地區冬天天黑早、部分名店只收現場候位（寫名字排隊）。以下為你們每天用餐時段的<b>「首選與走路/開車 5 分鐘內備案」</b>，每間都能直接開導航或秀「4人入座日文卡」！
-                        </p>
-                    </div>
-
-                    <!-- Day 1 Sakaiminato Dinner -->
-                    <div class="pixel-box p-4 space-y-3">
-                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
-                            <span class="bg-[#2B5B84] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 1 晚餐｜境港市區 (18:30)</span>
-                            <span class="text-sm font-bold text-[#D63E2F]">住：御宿野乃境港</span>
-                        </div>
-                        <p class="text-sm text-[#6E472B] font-medium">⚠️ 注意：境港水產直賣中心下午就關了，晚上在飯店周邊推薦以下免預約好店（21:30 記得回飯店吃免費夜鳴拉麵！）：</p>
-                        
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
-                            <div class="flex justify-between items-start gap-2">
-                                <div>
-                                    <h4 class="font-black text-base text-[#4A2E1B]">① 廻転すし 北海道 境港店 (超人氣迴轉壽司)</h4>
-                                    <p class="text-sm text-[#6E472B] mt-0.5">山陰必吃高CP值壽司！松葉蟹、紅楚蟹、鳥取和牛握壽司都有，現場抽號碼牌候位。</p>
-                                </div>
-                                <a href="https://www.google.com/maps/search/?api=1&query=廻転すし北海道+境港店" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
-                            </div>
-                            <div class="text-sm bg-white px-2.5 py-1.5 rounded border border-[#4A2E1B]/30 flex justify-between items-center">
-                                <span>🕒 11:00–21:00 (開車離飯店 6 分鐘)</span>
-                                <button onclick="copyText('0859-47-3711', '北海道壽司境港店電話')" class="text-[#D63E2F] font-bold underline">複製車機電話</button>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
-                            <div class="flex justify-between items-start gap-2">
-                                <div>
-                                    <h4 class="font-black text-base text-[#4A2E1B]">② 味処 美佐 (螃蟹・海鮮居酒屋名店)</h4>
-                                    <p class="text-sm text-[#6E472B] mt-0.5">就在御宿野乃境港走路 5 分鐘！冬季有活松葉蟹與紅楚蟹料理，建議 18:18 飯店 Check-in 後直接走去問位子。</p>
-                                </div>
-                                <a href="https://www.google.com/maps/search/?api=1&query=味処+美佐+境港" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
-                            <div class="flex justify-between items-start gap-2">
-                                <div>
-                                    <h4 class="font-black text-base text-[#4A2E1B]">③ 和泉 (境港水木茂大道居酒屋)</h4>
-                                    <p class="text-sm text-[#6E472B] mt-0.5">距離御宿野乃走路僅 2 分鐘，生魚片定食、蟹肉可樂餅、關東煮，氣氛溫馨免預約。</p>
-                                </div>
-                                <a href="https://www.google.com/maps/search/?api=1&query=和泉+境港" target="_blank" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
-                            </div>
-                        </div>
-
-                        <button onclick="openFlashcardModal('walkin4')" class="w-full pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2.5 pixel-font">
-                            🗣️ 秀出「請問 4 位現在有位子嗎？」大字卡
-                        </button>
-                    </div>
-
-                    <!-- Day 2 Izumo Soba Lunch -->
-                    <div class="pixel-box p-4 space-y-3">
-                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
-                            <span class="bg-[#E07A2E] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 2 午餐｜出雲蕎麥麵 (11:56)</span>
-                            <span class="text-sm font-bold text-[#388E3C]">已排入行程第 10 站</span>
-                        </div>
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
-                            <h4 class="font-black text-base text-[#4A2E1B]">🌟 首選：獻上蕎麥 羽根屋 本店 (天皇蕎麥麵)</h4>
-                            <p class="text-sm text-[#6E472B] leading-relaxed">
-                                <b>現場候位秘訣</b>：羽根屋中午不開放散客預約，抵達後<b>先派 1 人衝進去門口登記簿寫名字（建議寫英文拼音如 LIN，勾選 4 名）</b>，其他人在旁邊停好車（有免費專用停車場）。
-                            </p>
-                            <p class="text-sm font-bold text-[#D63E2F]">
-                                🍜 必點：三段割子そば (三層蕎麥麵) 或 割子そば定食！
-                            </p>
-                            <p class="text-sm text-[#6E472B] pt-1">
-                                🔄 <b>萬一排超過 40 分鐘的備案</b>：直接開車去第 11 站「出雲大社」表參道吃 <b>荒木屋</b>、<b>田中屋</b> 或 <b>砂屋</b>（都在大社門口走路 2 分鐘）。
-                            </p>
-                        </div>
-                        <button onclick="openFlashcardModal('soba')" class="w-full pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2.5 pixel-font">
-                            🗣️ 秀出「三段割子蕎麥麵 + 登記候位」大字卡
-                        </button>
-                    </div>
-
-                    <!-- Day 3 Lunch & Dinner -->
-                    <div class="pixel-box p-4 space-y-3">
-                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
-                            <span class="bg-[#D63E2F] text-white text-sm font-bold px-2.5 py-1 rounded pixel-font">Day 3 午晚餐｜柯南小鎮 & 米子海王</span>
-                            <span class="text-sm font-bold text-[#4A2E1B]">12:01 & 15:24</span>
-                        </div>
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-1.5">
-                            <h4 class="font-black text-base text-[#4A2E1B]">☕ 12:01 柯南之家 米花商店街 (第 14 站)</h4>
-                            <p class="text-sm text-[#6E472B] leading-relaxed">
-                                • <b>喫茶ポアロ (白羅咖啡廳)</b>：必點安室透招牌拿坡里義大利麵與火腿三明治（現場抽號碼牌）。<br>
-                                • <b>Conan's Kitchen</b>：咖哩飯與柯南造型漢堡，座位較多。<br>
-                                • <b>香味徳 由良店</b>（車程3分鐘）：鳥取名物「牛骨拉麵」老店！
-                            </p>
-                        </div>
-                        <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-2">
-                            <h4 class="font-black text-base text-[#4A2E1B]">🦀 15:24 / 晚餐 米子「海王」與燒肉備案 (第 16 站)</h4>
-                            <p class="text-sm text-[#6E472B] leading-relaxed">
-                                • <b>山陰日本海料理 海王 (角盤町)</b>：活松葉蟹專門店！⚠️ <b>柴柴重要提醒</b>：行程表排 15:24 抵達，但海王下午 <b>14:00~17:00 為午休時間</b>！建議你們 15:30 先去 <b>米子駅前 Super Hotel</b> Check-in 或逛旁邊 <b>AEON Mall 日吉津</b>，17:00 一開門直接去海王問現場位子！<br>
-                                • <b>米子免預約燒肉備案</b>：若海王客滿，推薦去 <b>焼肉・ホルモン 大力家族亭</b> 或 <b>炭火焼肉 屋台さかい 米原店</b>（吃鳥取和牛 オレイン55）！
-                            </p>
-                            <div class="flex flex-wrap gap-2 pt-1">
-                                <a href="https://www.google.com/maps/search/?api=1&query=海王+米子" target="_blank" class="pixel-btn bg-[#2B5B84] text-white text-sm px-3 py-1.5 font-bold">導航：海王</a>
-                                <a href="https://www.google.com/maps/search/?api=1&query=大力家族亭+米子" target="_blank" class="pixel-btn bg-[#D63E2F] text-white text-sm px-3 py-1.5 font-bold">備案：大力家族亭燒肉</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SUB-VIEW B: Shrine & Goshuin Guide -->
-                <div id="guide-view-shrine" class="hidden space-y-4">
-                    <div class="pixel-box bg-[#FFF0EE] p-4 space-y-2">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-3xl">⛩️</span>
-                            <div>
-                                <h3 class="font-bold text-base text-[#D63E2F] pixel-font">出雲大社「二禮、四拍手、一禮」</h3>
-                                <p class="text-sm text-[#4A2E1B] mt-0.5">一般日本神社是拍手 2 下，但<b>出雲大社與萬九千神社</b>參拜時要<b>拍手 4 下（四拍手）</b>喔！</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sand Ritual Step-by-Step Card -->
-                    <div class="pixel-box p-4 space-y-3">
-                        <h3 class="font-bold text-base text-[#4A2E1B] pixel-font flex items-center gap-1.5">
-                            <span class="bg-[#E07A2E] text-white px-2 py-0.5 rounded text-sm">Day 2 必做</span>
-                            出雲大社「稻佐之濱 ➔ 素鵞社」換沙全攻略
-                        </h3>
-                        <p class="text-sm text-[#6E472B] leading-relaxed">
-                            你們的新行程在 Day 2 13:17 去出雲大社！強烈建議在去出雲大社前（或剛抵達時），順路開 3 分鐘到海邊的<b>「稻佐之濱（弁天島）」</b>抓一小袋沙子再去參拜：
-                        </p>
-                        <div class="space-y-2.5 text-sm">
-                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
-                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 1</span>
-                                <span>在<b>稻佐之濱（弁天島前）</b>用預先帶的小夾鏈袋裝一點海沙。</span>
-                            </div>
-                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
-                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 2</span>
-                                <span>先參拜<b>出雲大社拜殿與八足門（御本殿）</b>，再逆時針走到最裡面的<b>「素鵞社（そがのやしろ）」</b>（大國主大神的父神素戔嗚尊）。</span>
-                            </div>
-                            <div class="bg-[#FFF8E7] p-2.5 rounded border border-[#4A2E1B] flex gap-2.5">
-                                <span class="font-black text-[#D63E2F] whitespace-nowrap">STEP 3</span>
-                                <span>把帶來的海沙倒進素鵞社左右側的木箱奉納，接著<b>拿旁邊的小木杓，舀取箱內已經過神明祈福的乾沙（換比你帶來更少一點的量）</b>帶回家鎮宅保平安！</span>
-                            </div>
-                        </div>
-                        <a href="https://www.google.com/maps/search/?api=1&query=稲佐の浜" target="_blank" class="block text-center pixel-btn bg-[#2B5B84] text-white text-sm py-2.5 font-bold pixel-font">
-                            📍 開啟「稻佐之濱」Google 導航 (離出雲大社僅 3 分鐘)
-                        </a>
-                    </div>
-
-                    <!-- Mankusen Jinja Card -->
-                    <div class="pixel-box p-4 space-y-2">
-                        <h3 class="font-bold text-base text-[#4A2E1B] pixel-font">🦌 Day 2 (11:18) 萬九千神社 (神在月送神之地)</h3>
-                        <p class="text-sm text-[#6E472B] leading-relaxed">
-                            全國八百萬神明在出雲開完會後，最後聚餐（直會）與道別的神社！記得抽可愛的「神在みくじ」與領取限定御朱印。
-                        </p>
-                    </div>
-                </div>
+                <div id="guide-view-food" class="space-y-4"></div>
+                <div id="guide-view-shop" class="hidden space-y-4"></div>
+                <div id="guide-view-spot" class="hidden space-y-4"></div>
             </section>
 
             <!-- ================= TAB 4: 租車與憑證夾 (VOUCHERS & CAR) ================= -->
@@ -663,7 +506,7 @@
             </button>
             <button onclick="switchTab('guide')" id="nav-guide" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all">
                 <i class="fa-solid fa-utensils text-lg"></i>
-                <span class="text-xs font-bold pixel-font mt-0.5">美食神社</span>
+                <span class="text-xs font-bold pixel-font mt-0.5">美食購物</span>
             </button>
             <button onclick="switchTab('voucher')" id="nav-voucher" class="flex flex-col items-center justify-center py-1.5 rounded text-[#FFF8E7] hover:bg-white/10 transition-all">
                 <i class="fa-solid fa-car text-lg"></i>
@@ -833,6 +676,6 @@
 
     </div>
 
-    <script src="js/app.js?v=2"></script>
+    <script src="js/app.js?v=3"></script>
 </body>
 </html>

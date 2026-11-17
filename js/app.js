@@ -3,20 +3,32 @@
         // 原版用的是 Unsplash 圖庫照（跟景點本身無關），改成在執行時向維基百科抓「該景點的真實照片」
         const LEGACY_STOCK_PREFIX = "https://images.unsplash.com/";
         const defaultStopPhotos = {}; // 保留變數名稱，讓下方行程資料的 img 欄位維持空白
-        const wikiPhotoTitles = {
-            s3: "zh:臺灣桃園國際機場",
-            s4: "米子空港",
-            s8: "松江城",
-            s9: "万九千神社",
-            s10: "出雲そば",
-            s11: "出雲大社",
-            s12: "日御碕灯台",
-            s13: "日御碕神社",
-            s14: "青山剛昌ふるさと館",
-            s15: "鳥取二十世紀梨記念館",
-            s16: "ズワイガニ",
-            s17: "米子駅",
-            s20: "米子空港"
+        // 景點照片：已從維基百科下載到 photos/ 資料夾（開放授權照片），不用再即時連維基，離線也看得到
+        const STOP_PHOTOS = {
+            s1: 'taoyuan-city', s2: 'tpe-airport', s3: 'tpe-t1', s4: 'yonago-airport', s5: 'voxy',
+            s6: 'mizuki-road', s7: 'mizuki-road', s8: 'matsue-castle', s9: 'mankusen', s10: 'izumo-soba',
+            s11: 'izumo-taisha', s12: 'hinomisaki-lighthouse', s13: 'hinomisaki-shrine', s14: 'conan',
+            s15: 'pear-museum', s16: 'snow-crab', s17: 'yonago-station', s18: 'yonago-castle', s19: 'voxy',
+            s20: 'yonago-airport', s21: 'tpe-t1', s22: 'tpe-airport', s23: 'taoyuan-city'
+        };
+        const PHOTO_CREDITS = {
+            'taoyuan-city': { title: '桃園市', file: 'Qingpu,_Taoyuan_City_Skyline_2024.jpg' },
+            'tpe-airport': { title: '臺灣桃園國際機場', file: 'Taoyuan_International_Airport.jpg' },
+            'tpe-t1': { title: '臺灣桃園國際機場第一航廈', file: 'Exterior_of_Terminal_1,_Taoyuan_Airport_20141230.jpg' },
+            'yonago-airport': { title: '美保飛行場', file: '150321_Yonago_Airport_Yonago_Tottori_pref_Japan01s3.jpg' },
+            'voxy': { title: 'トヨタ・ヴォクシー', file: '2022_Toyota_Voxy_(Indonesia)_front_view.jpg' },
+            'mizuki-road': { title: '水木しげるロード', file: 'Mizuki_Shigeru_Road_2026.jpg' },
+            'matsue-castle': { title: '松江城', file: 'Matsue_Castle_Keep_Tower_20230617.jpg' },
+            'mankusen': { title: '万九千神社', file: 'Makusenoyashiro.JPG' },
+            'izumo-soba': { title: '出雲そば', file: 'IzumoSoba_WarigoSoba_5dan.jpg' },
+            'izumo-taisha': { title: '出雲大社', file: 'Haiden_of_Izumo-taisha-1.JPG' },
+            'hinomisaki-lighthouse': { title: '出雲日御碕灯台', file: 'Hinomisaki_lighthouse_Izumo01bs3200.jpg' },
+            'hinomisaki-shrine': { title: '日御碕神社', file: 'Hinomisaki-jinja_Two-storied_Gate_001.jpg' },
+            'conan': { title: '青山剛昌ふるさと館', file: 'Gosho_Aoyama_Manga_Factory.jpg' },
+            'pear-museum': { title: '鳥取二十世紀梨記念館', file: 'Tottori_Nijisseiki_Pear_Museum01n4592.jpg' },
+            'snow-crab': { title: 'ズワイガニ', file: 'Chionoecetes_opilio_Kanikkokan.jpg' },
+            'yonago-station': { title: '米子駅', file: '米子駅駅舎.jpg' },
+            'yonago-castle': { title: '米子城', file: 'Yonago_Castle,_honmaru-1.jpg' }
         };
 
         const defaultItineraryData = {
@@ -359,51 +371,19 @@
             });
         });
 
-        // ---- 維基百科真實照片（抓一次後存在手機，離線也看得到網址快取）----
-        let wikiPhotoCache = {};
-        try { wikiPhotoCache = JSON.parse(localStorage.getItem('sanin_wiki_photos_v2')) || {}; } catch (e) {}
-        const wikiPending = {};
         function getStopPhoto(stop) {
             if (stop.img) return stop.img;
-            const c = wikiPhotoCache[stop.id];
-            return c && c.src ? c.src : '';
+            const name = STOP_PHOTOS[stop.id];
+            return name ? `photos/${name}.jpg` : '';
         }
-        function getStopPhotoFallback(stop) {
-            if (stop.img) return '';
-            return wikiPhotoCache[stop.id]?.fallback || '';
-        }
+        function getStopPhotoFallback(stop) { return ''; }
         function getStopPhotoCredit(stop) {
             if (stop.img) return '';
-            const c = wikiPhotoCache[stop.id];
-            return c && c.src ? `照片：維基百科「${c.title}」` : '';
+            const name = STOP_PHOTOS[stop.id];
+            const c = name && PHOTO_CREDITS[name];
+            return c ? (c.note || `照片：維基百科「${c.title}」`) : '';
         }
-        async function loadWikiPhoto(id) {
-            const raw = wikiPhotoTitles[id];
-            const c = wikiPhotoCache[id];
-            const recentFail = c && !c.src && c.failedAt && Date.now() - c.failedAt < 86400000;
-            if (!raw || (c && c.src) || recentFail || wikiPending[id]) return false;
-            wikiPending[id] = true;
-            const [lang, title] = raw.includes(':') ? raw.split(':') : ['ja', raw];
-            try {
-                const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
-                if (!res.ok) throw new Error(res.status);
-                const data = await res.json();
-                // Wikimedia 只接受固定縮圖寬度（330/500/960/1280…），原圖夠大才用 960，否則直接用原圖
-                const thumb = data.thumbnail?.source || '';
-                const orig = data.originalimage;
-                const src = orig && orig.width > 960 && thumb ? thumb.replace(/\/\d+px-/, '/960px-') : (orig?.source || thumb);
-                wikiPhotoCache[id] = { src, fallback: thumb, title: data.title || title };
-            } catch (e) {
-                wikiPhotoCache[id] = { src: '', title, failedAt: Date.now() };
-            }
-            try { localStorage.setItem('sanin_wiki_photos_v2', JSON.stringify(wikiPhotoCache)); } catch (e) {}
-            return true;
-        }
-        async function ensureWikiPhotos(day) {
-            const stops = itineraryData[day]?.stops || [];
-            const results = await Promise.all(stops.filter(st => !st.img).map(st => loadWikiPhoto(st.id)));
-            if (results.some(Boolean) && currentDay === day) selectDay(day, { skipFetch: true, keepScroll: true });
-        }
+        function ensureWikiPhotos() { /* 照片已內建，不需要再抓 */ }
 
         function saveItineraryToStorage() {
             localStorage.setItem('sanin_custom_itinerary_v3', JSON.stringify(itineraryData));
@@ -893,6 +873,9 @@
                             <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}&travelmode=driving" target="_blank" rel="noopener" class="pixel-btn bg-[#2B5B84] text-white text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-diamond-turn-right"></i> 開車導航
                             </a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.mapQuery || stop.name)}" target="_blank" rel="noopener" class="pixel-btn bg-[#FFF8E7] text-[#2B5B84] text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-images"></i> 地圖看實景照
+                            </a>
                             ${(!photo) ? `
                             <button onclick="openEditStopModal(${idx})" class="pixel-btn bg-[#FFF8E7] text-[#4A2E1B] text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-camera text-[#E07A2E]"></i> 加照片
@@ -910,7 +893,7 @@
                             ` : ''}
                             ${stop.hasFoodRescue ? `
                             <button onclick="switchTab('guide'); switchGuideSubTab('food');" class="pixel-btn bg-[#D63E2F] text-white text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
-                                🦀 免訂位餐廳攻略
+                                🍜 周邊美食
                             </button>
                             ` : ''}
                         </div>
@@ -1500,23 +1483,167 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function switchGuideSubTab(sub) {
-            const foodView = document.getElementById('guide-view-food');
-            const shrineView = document.getElementById('guide-view-shrine');
-            const foodBtn = document.getElementById('guide-btn-food');
-            const shrineBtn = document.getElementById('guide-btn-shrine');
+        // ==================== 美食・購物・備案景點 ====================
+        // 營業時間查自 じゃらん、食べログ、NAVITIME 等（2026/11 查詢），出發前最好再確認一次
+        const GUIDE_DATA = {
+            food: [
+                {
+                    head: 'Day 1 晚餐｜境港（住：御宿野乃 境港）', sub: '12/4 週五・Check-in 約 18:20',
+                    tip: '晚上 21:30 飯店有免費「夜鳴きそば」（醬油拉麵），晚餐不用吃太撐！',
+                    items: [
+                        { name: '山陰のお寿司 ヒトトセ 境港駅前店', zh: '迴轉壽司・山陰海鮮', desc: '離飯店約 70 公尺、走路 1 分鐘。松葉蟹、紅楚蟹、白身魚握壽司，4 個人好入座。', hours: '11:00–21:00（L.O. 20:30）', tel: '0859-44-5522', q: '山陰のお寿司 ヒトトセ 境港駅前店' },
+                        { name: 'みづき屋', zh: '海鮮丼・定食', desc: '境港站走路約 5 分鐘的海鮮丼店，晚上有沒有開請先打電話或看 Google 地圖。', hours: '晚上營業時間請先確認', q: 'みづき屋 境港' }
+                    ]
+                },
+                {
+                    head: 'Day 2 午餐｜出雲（萬九千神社 → 出雲大社）', sub: '12/5 週六・行程第 10 站',
+                    tip: '首選「羽根屋 本店」已排進行程；排太久就直接開去出雲大社門前吃，下面三間都在大社走路 5 分鐘內。',
+                    items: [
+                        { name: '献上そば 羽根屋 本店', zh: '首選・出雲蕎麥麵', desc: '必點「三段割子そば」。到了先派 1 人進門口寫名字候位。', hours: '中午時段・依現場為準', q: '献上そば 羽根屋 本店', jp: 'soba' },
+                        { name: 'そば 荒木屋', zh: '備案・江戶時代老店', desc: '割子蕎麥 3 段約 ¥930，賣完就收。', hours: '11:00–16:00（賣完為止）', q: 'そば 荒木屋 出雲大社' },
+                        { name: 'そば処 田中屋 本店', zh: '備案・大社正門前', desc: '石臼磨粉的出雲蕎麥，就在出雲大社鳥居旁。', hours: '11:00–16:00（週四可能公休）', q: 'そば処 田中屋 出雲大社' },
+                        { name: '本格手打蕎麦 出雲 砂屋', zh: '備案・十割蕎麥', desc: '神門通入口附近，營業到比較晚。', hours: '10:00–17:00', q: '出雲 砂屋 神門通り' }
+                    ]
+                },
+                {
+                    head: 'Day 2 晚餐｜界 出雲', sub: '12/5 週六・飯店會席料理',
+                    tip: '晚餐在飯店吃冬季松葉蟹會席，不用另外找餐廳。',
+                    items: []
+                },
+                {
+                    head: 'Day 3 午餐｜柯南小鎮（北榮町）', sub: '12/6 週日・行程第 14 站',
+                    items: [
+                        { name: '喫茶ポアロ（コナンの家 米花商店街）', zh: '柯南主題咖啡廳', desc: '動畫裡的「白羅咖啡廳」，吃主題輕食、拍照打卡。', hours: '依商店街營業時間', q: 'コナンの家 米花商店街' },
+                        { name: '香味徳 由良本店', zh: '鳥取名物・牛骨拉麵', desc: '由良站（柯南站）走路 3 分鐘的老店，湯頭是牛骨熬的，鳥取才吃得到。', hours: '11:00–14:00、17:00–20:00（週一、國定假日休）', tel: '0858-37-4933', q: '香味徳 由良店' },
+                        { name: '土蔵蕎麦', zh: '倉吉・白壁土藏群旁', desc: '去梨記念館順路，60 年以上的手打蕎麥老店。', hours: '營業時間請先確認', q: '土蔵蕎麦 倉吉' }
+                    ]
+                },
+                {
+                    head: 'Day 3 晚餐｜米子（住：Super Hotel 米子駅前）', sub: '12/6 週日',
+                    tip: '這晚是週日，有些居酒屋公休；下面都是週日有開的。停好車走路去最輕鬆。',
+                    items: [
+                        { name: 'かに・郷土料理 海王', zh: '松葉蟹專門店', desc: '活松葉蟹、紅楚蟹、鳥取和牛涮涮鍋。想吃整隻螃蟹選這間。', hours: '營業時間請先打電話確認', q: 'かに・郷土料理 海王 米子', jp: 'crab_meat' },
+                        { name: '三代目網元 魚鮮水産 米子駅前店', zh: '海鮮居酒屋', desc: '米子站走路 2 分鐘，生魚片、壽司、螃蟹、岩牡蠣，當天就能訂位。', hours: '17:00–23:00', q: '魚鮮水産 米子駅前店' },
+                        { name: '美酒佳肴 ゆらく', zh: '和食居酒屋', desc: '米子站走路 3 分鐘，招牌是鯖魚涮涮鍋（鯖しゃぶ）。', hours: '16:30–24:00', q: '美酒佳肴 ゆらく 米子' }
+                    ]
+                }
+            ],
+            shop: [
+                {
+                    head: '🛍️ 唐吉訶德', sub: '藥妝、零食、伴手禮一次買齊・可退稅',
+                    items: [
+                        { name: 'MEGAドン・キホーテ 米子店', zh: '山陰最大的唐吉訶德', desc: '2024 年開幕。Day 3 晚上住米子，晚餐後開車約 10 分鐘就到，開到半夜。', hours: '9:00–24:00・無休', q: 'MEGAドン・キホーテ米子店' },
+                        { name: 'MEGAドン・キホーテ 出雲店', zh: '出雲市區', desc: 'Day 2 在出雲時順路可以去（出雲市姬原 2 丁目）。', hours: '營業時間請先確認', q: 'MEGAドン・キホーテ 出雲店' }
+                    ]
+                },
+                {
+                    head: '💊 松本清（マツモトキヨシ）', sub: '鳥取縣只有 2 間，米子這間離飯店最近',
+                    items: [
+                        { name: 'マツモトキヨシ 米子久米店', zh: '米子站走路 9 分鐘', desc: '在 Marui（マルイ）久米店 1 樓。Day 3 晚上從 Super Hotel 走路就到。', hours: '9:00–21:00', tel: '0859-36-3939', q: 'マツモトキヨシ 米子久米店' }
+                    ]
+                },
+                {
+                    head: '🏔️ mont-bell 大山直營店', sub: '大山登山口・米子開車約 40 分鐘',
+                    items: [
+                        { name: 'モンベル 大山店', zh: 'mont-bell 直營店', desc: '在大山寺橋旁，旁邊是 mont-bell 經營的「大山參道市場」，還能順便看大山雪景。', hours: '10:00–18:00・無休（官網）', tel: '0859-52-2511', q: 'モンベル 大山店' }
+                    ]
+                },
+                {
+                    head: '🏬 其他好逛', sub: '下雨或想補貨時',
+                    items: [
+                        { name: 'イオン 米子駅前店', zh: 'AEON 超市', desc: '離 Super Hotel 約 300 公尺，買水果、便當、零食。', hours: '食品賣場 8:00–22:00', q: 'イオン米子駅前店' },
+                        { name: 'イオンモール日吉津', zh: 'AEON Mall 購物中心', desc: '米子市區開車約 15 分鐘，大型購物中心，下雨天的好去處。', hours: '食品賣場 8:00–23:00', q: 'イオンモール日吉津' }
+                    ]
+                }
+            ],
+            spot: [
+                {
+                    head: 'Day 1｜境港', sub: '晚上還有力氣再出門的話',
+                    items: [
+                        { name: '水木しげるロード', zh: '水木茂之路（鬼太郎妖怪街）', desc: '離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。', q: '水木しげるロード' }
+                    ]
+                },
+                {
+                    head: 'Day 2｜松江・出雲', sub: '時間多出來或下雨時',
+                    items: [
+                        { name: '島根県立古代出雲歴史博物館', zh: '古代出雲歷史博物館', desc: '出雲大社旁邊，室內展館，下雨天的首選備案。', q: '島根県立古代出雲歴史博物館' },
+                        { name: '宍道湖 夕日スポット', zh: '宍道湖夕陽', desc: '日本夕陽百選，松江市區湖邊（嫁ヶ島一帶）。', q: '宍道湖 夕日スポット とるぱ' },
+                        { name: '稲佐の浜', zh: '稻佐之濱', desc: '出雲大社開車 3 分鐘的海邊，弁天島很好拍。', q: '稲佐の浜' }
+                    ]
+                },
+                {
+                    head: 'Day 3｜倉吉・米子', sub: '順路或晚上的選擇',
+                    items: [
+                        { name: '倉吉 白壁土蔵群', zh: '白壁土藏群老街', desc: '梨記念館附近，紅瓦白牆的老街，有小店和咖啡廳。', q: '倉吉 白壁土蔵群' },
+                        { name: 'とっとり花回廊 イルミネーション', zh: '鳥取花迴廊 冬季點燈', desc: '冬季晚上約 100 萬顆燈。去年是 17:30–21:00、週二休園；今年日期與票價出發前要再查。', q: 'とっとり花回廊' },
+                        { name: '皆生温泉', zh: '皆生溫泉', desc: '米子市區的海邊溫泉街，有不住宿也能泡的溫泉。', q: '皆生温泉' },
+                        { name: '米子城跡', zh: '米子城跡', desc: '爬 15 分鐘到頂，可以看到米子市區、中海和大山。', q: '米子城跡' }
+                    ]
+                },
+                {
+                    head: '想多跑一點（車程較遠）', sub: '',
+                    items: [
+                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: '米子開車約 30 分鐘（安來市），庭園連續多年被評為日本第一。', q: '足立美術館' },
+                        { name: '大山', zh: '大山（伯耆富士）', desc: '可以跟 mont-bell 大山店一起排，冬天有機會看到雪景。', q: '大山寺 鳥取' }
+                    ]
+                }
+            ]
+        };
 
-            if (sub === 'food') {
-                foodView.classList.remove('hidden');
-                shrineView.classList.add('hidden');
-                foodBtn.className = "pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font";
-                shrineBtn.className = "pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-base pixel-font";
-            } else {
-                shrineView.classList.remove('hidden');
-                foodView.classList.add('hidden');
-                shrineBtn.className = "pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font";
-                foodBtn.className = "pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-base pixel-font";
-            }
+        function renderGuideCard(it) {
+            const nav = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.q)}`;
+            return `
+            <div class="bg-[#FFF8E7] p-3 rounded border-2 border-[#4A2E1B] space-y-1.5">
+                <div class="flex justify-between items-start gap-2">
+                    <div class="min-w-0">
+                        <h4 class="font-black text-base text-[#4A2E1B] leading-snug">${esc(it.name)}</h4>
+                        <div class="text-xs font-bold text-[#D63E2F]">${esc(it.zh)}</div>
+                    </div>
+                    <a href="${nav}" target="_blank" rel="noopener" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
+                </div>
+                <p class="text-sm text-[#6E472B] leading-relaxed">${esc(it.desc)}</p>
+                ${(it.hours || it.tel || it.jp) ? `
+                <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-[#4A2E1B]">
+                    ${it.hours ? `<span>🕒 ${esc(it.hours)}</span>` : ''}
+                    ${it.tel ? `<button onclick="copyText('${esc(it.tel)}', '${esc(it.name)} 電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-1 text-xs font-bold">📞 複製電話（車機導航用）</button>` : ''}
+                    ${it.jp ? `<button onclick="openFlashcardModal('${esc(it.jp)}')" class="pixel-btn bg-[#F5B041] text-[#4A2E1B] px-2 py-1 text-xs font-bold">🗣️ 點餐日文卡</button>` : ''}
+                </div>` : ''}
+            </div>`;
+        }
+
+        function renderGuide() {
+            ['food', 'shop', 'spot'].forEach(kind => {
+                const el = document.getElementById(`guide-view-${kind}`);
+                if (!el) return;
+                const intro = kind === 'food' ? `
+                    <div class="pixel-box-cream p-3.5 border-l-8 border-l-[#D63E2F]">
+                        <div class="text-base font-bold text-[#D63E2F] pixel-font mb-1">💡 你們 4 人沒有訂餐廳</div>
+                        <p class="text-sm text-[#4A2E1B] leading-relaxed font-medium">山陰冬天天黑早、有些店只能現場候位。每餐都放了飯店或景點附近的首選＋備案，進門可以秀「4人入座日文卡」。</p>
+                        <button onclick="openFlashcardModal('walkin4')" class="w-full mt-2 pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2 pixel-font">🗣️ 秀出「請問 4 位現在有位子嗎？」</button>
+                    </div>` : '';
+                el.innerHTML = intro + GUIDE_DATA[kind].map(g => `
+                    <div class="pixel-box p-4 space-y-3">
+                        <div class="border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
+                            <div class="text-base font-black text-[#2B5B84] pixel-font">${esc(g.head)}</div>
+                            ${g.sub ? `<div class="text-xs font-bold text-[#6E472B] mt-0.5">${esc(g.sub)}</div>` : ''}
+                        </div>
+                        ${g.tip ? `<p class="text-sm text-[#6E472B] font-medium">💡 ${esc(g.tip)}</p>` : ''}
+                        ${g.items.map(renderGuideCard).join('')}
+                    </div>`).join('') + `<p class="text-xs text-[#6E472B] text-center">營業時間為 2026 年 11 月查詢，出發前或到店前建議再看一次 Google 地圖。</p>`;
+            });
+        }
+
+        function switchGuideSubTab(sub) {
+            if (sub === 'shrine') sub = 'spot';
+            ['food', 'shop', 'spot'].forEach(k => {
+                const view = document.getElementById(`guide-view-${k}`);
+                const btn = document.getElementById(`guide-btn-${k}`);
+                const on = k === sub;
+                view.classList.toggle('hidden', !on);
+                btn.className = on
+                    ? "pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-sm pixel-font"
+                    : "pixel-btn bg-white text-[#4A2E1B] py-2.5 font-bold text-sm pixel-font";
+            });
         }
 
         function switchExpenseSubTab(sub) {
@@ -1608,6 +1735,7 @@
                 }
             }, 60000);
             renderJapaneseCards();
+            renderGuide();
             renderMembersAndExpenses();
             renderChecklist();
         };

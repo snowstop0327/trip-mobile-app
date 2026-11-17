@@ -4,26 +4,42 @@
  * - 天氣與維基 API：直接走網路（App 本身已存在手機裡）
  * 改了檔案想強迫大家更新時，把 VERSION 加 1 即可。
  */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const APP_CACHE = `sanin-app-${VERSION}`;
 const ASSET_CACHE = 'sanin-assets';
 const APP_SHELL = [
   './',
   './index.html',
-  './css/app.css?v=2',
-  './js/app.js?v=2',
+  './css/app.css?v=3',
+  './js/app.js?v=3',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './icons/favicon-32.png',
+  './photos/conan.jpg',
+  './photos/hinomisaki-lighthouse.jpg',
+  './photos/hinomisaki-shrine.jpg',
+  './photos/izumo-soba.jpg',
+  './photos/izumo-taisha.jpg',
+  './photos/mankusen.jpg',
+  './photos/matsue-castle.jpg',
+  './photos/mizuki-road.jpg',
+  './photos/pear-museum.jpg',
+  './photos/snow-crab.jpg',
+  './photos/taoyuan-city.jpg',
+  './photos/tpe-airport.jpg',
+  './photos/tpe-t1.jpg',
+  './photos/voxy.jpg',
+  './photos/yonago-airport.jpg',
+  './photos/yonago-castle.jpg',
+  './photos/yonago-station.jpg'
 ];
 const ASSET_HOSTS = [
   'fonts.googleapis.com',
   'fonts.gstatic.com',
   'cdnjs.cloudflare.com',
-  'upload.wikimedia.org',
-  'thumb.wikimedia.org'
+  'upload.wikimedia.org'
 ];
 
 // 字型樣式表裡列了很多字型檔（中文字型被切成上百個小檔），把它們全部先存起來，離線才不會變回系統字
