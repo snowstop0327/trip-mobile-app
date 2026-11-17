@@ -46,7 +46,7 @@
                         address: "334桃園市八德區興仁里豐田二路98-112號",
                         driveNext: "🚗 約 31 分",
                         tag: "集合出發",
-                        note: "檢查護照、台灣駕照正本＋日文譯本、御朱印帳、夾鏈袋（裝稻佐之濱海沙用）！",
+                        note: "檢查護照、台灣駕照正本＋日文譯本、御朱印帳！",
                         mapQuery: "桃園市八德區豐田二路98號"
                     },
                     {
@@ -180,15 +180,15 @@
                         id: "s11",
                         time: "13:17",
                         stay: "停留 2 小時",
-                        name: "出雲大社 (Izumo Taisha) & 稻佐之濱取沙",
+                        name: "出雲大社 (Izumo Taisha)",
                         address: "195 Taishacho Kizukihigashi, Izumo, Shimane 699-0701 日本",
                         tel: "0853-53-3100",
                         driveNext: "🚗 約 20 分",
                         tag: "神在月大社",
                         img: defaultStopPhotos.s11,
-                        note: "💡 建議先順路開 3 分鐘到『稻佐之濱』裝海沙 ➔ 出雲大社（二禮四拍手一禮）➔ 北島國造館領『龍蛇神』御朱印 ➔ 素鵞社換御砂！",
+                        note: "💡 出雲大社參拜（二禮四拍手一禮）➔ 北島國造館領『龍蛇神』御朱印 ➔ 繞到本殿後方素鵞社參拜！",
                         mapQuery: "出雲大社",
-                        checkTask: "稻佐之濱取沙 ➔ 出雲大社素鵞社換沙"
+                        checkTask: "出雲大社參拜 ➔ 領御朱印"
                     },
                     {
                         id: "s12",
@@ -362,6 +362,16 @@
 
         // Load customizable itinerary from localStorage or clone default
         let itineraryData = JSON.parse(localStorage.getItem('sanin_custom_itinerary_v3')) || JSON.parse(JSON.stringify(defaultItineraryData));
+
+        // 一次性：把手機上已存的舊「取沙」字樣換掉（2026-11-17 移除取沙攻略）
+        (function removeSandWording(){
+            const fix = {"檢查護照、台灣駕照正本＋日文譯本、御朱印帳、夾鏈袋（裝稻佐之濱海沙用）！": "檢查護照、台灣駕照正本＋日文譯本、御朱印帳！", "出雲大社 (Izumo Taisha) & 稻佐之濱取沙": "出雲大社 (Izumo Taisha)", "💡 建議先順路開 3 分鐘到『稻佐之濱』裝海沙 ➔ 出雲大社（二禮四拍手一禮）➔ 北島國造館領『龍蛇神』御朱印 ➔ 素鵞社換御砂！": "💡 出雲大社參拜（二禮四拍手一禮）➔ 北島國造館領『龍蛇神』御朱印 ➔ 繞到本殿後方素鵞社參拜！", "稻佐之濱取沙 ➔ 出雲大社素鵞社換沙": "出雲大社參拜 ➔ 領御朱印"};
+            let changed = false;
+            Object.values(itineraryData || {}).forEach(d => (d?.stops || []).forEach(st => {
+                ['name','note','checkTask'].forEach(k => { if (st[k] && fix[st[k]] !== undefined) { st[k] = fix[st[k]]; changed = true; } });
+            }));
+            if (changed) localStorage.setItem('sanin_custom_itinerary_v3', JSON.stringify(itineraryData));
+        })();
 
         // 清掉舊版存在手機裡的 Unsplash 圖庫照（不是真的景點），讓它改用維基百科真實照片
         Object.keys(itineraryData).forEach(dayKey => {
@@ -572,7 +582,6 @@
         const defaultChecklist = [
             { id: "c1", text: "🪪 台灣駕照正本 ＋ 日文譯本 (絕對必帶！)", done: false },
             { id: "c2", text: "📕 護照 (效期6個月以上) & Visit Japan Web QR", done: false },
-            { id: "c3", text: "🛍️ 裝沙用小夾鏈袋 / 小玻璃瓶 (稻佐之濱取沙用)", done: false },
             { id: "c4", text: "📖 御朱印帳 (出雲大社龍蛇神、萬九千神社)", done: false },
             { id: "c5", text: "🧦 厚襪子 (12月進松江城天守閣脫鞋防冰腳)", done: false },
             { id: "c6", text: "🧥 防風保暖大衣 & 暖暖包 (日御碕海邊看夕陽風大)", done: false },
@@ -581,6 +590,11 @@
             { id: "c9", text: "📶 日本網卡 / eSIM 已開通", done: false }
         ];
         let checklist = JSON.parse(localStorage.getItem('sanin_checklist_v2')) || defaultChecklist;
+        // 一次性：移除舊的「裝沙用夾鏈袋」項目
+        if (Array.isArray(checklist) && checklist.some(c => c.id === 'c3' && /裝沙/.test(c.text))) {
+            checklist = checklist.filter(c => !(c.id === 'c3' && /裝沙/.test(c.text)));
+            localStorage.setItem('sanin_checklist_v2', JSON.stringify(checklist));
+        }
 
         // Mini Pixel Shiba SVG helper for roaming across cards
         function getMiniShibaCarSvg() {
