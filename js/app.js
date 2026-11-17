@@ -410,84 +410,111 @@
         }
 
         // ==================== 2. JAPANESE POINT-AND-SPEAK PHRASEBOOK DATA ====================
+        // 分類：一般旅遊會用到的短句（basic/dining/shop/move/car/hotel/sos），以及這趟行程專用的長句（trip）
+        const JP_CATEGORIES = [
+            { id: 'basic',  label: '👋 基本' },
+            { id: 'dining', label: '🍜 餐廳' },
+            { id: 'shop',   label: '🛍️ 購物' },
+            { id: 'move',   label: '🚶 問路交通' },
+            { id: 'car',    label: '🚐 開車' },
+            { id: 'hotel',  label: '♨️ 飯店' },
+            { id: 'sos',    label: '🆘 緊急' },
+            { id: 'trip',   label: '🗾 這趟專用' }
+        ];
+        const P = (category, zh, jp, romaji, extra) => Object.assign({ category, zh, jp, romaji }, extra || {});
         const japaneseCards = {
-            walkin4: {
-                category: "dining",
-                badge: "🦀 沒訂位進餐廳必備 #1",
-                zh: "不好意思，我們沒有預約，請問現在 4 個人有位子嗎？",
-                jp: "すみません、予約していませんが、4人（よにん）入れますか？",
-                romaji: "Sumimasen, yoyaku shite imasen ga, yo-nin hairemasu ka?"
-            },
-            waitlist: {
-                category: "dining",
-                badge: "📝 餐廳客滿候位必備",
-                zh: "我們可以等，請問要在哪裡寫名字登記候位？大概需要等多久呢？",
-                jp: "待ちます。名前を書く場所はどこですか？どのくらい待ちますか？",
-                romaji: "Machimasu. Namae wo kaku basho wa doko desu ka? Dono kurai machimasu ka?"
-            },
-            soba: {
-                category: "dining",
-                badge: "🍜 Day 2 羽根屋蕎麥麵點餐",
-                zh: "請給我們「三段割子蕎麥麵（三層出雲蕎麥麵）」，還有推薦的餐點是什麼？",
-                jp: "「三段割子そば」をお願いします。あと、おすすめは何ですか？",
-                romaji: "Sandan Warigo Soba wo onegaishimasu. Ato, osusume wa nan desu ka?"
-            },
-            crab_meat: {
-                category: "dining",
-                badge: "🥩 螃蟹 / 鳥取和牛燒肉點餐",
-                zh: "我們想吃當地的松葉蟹 / 鳥取和牛！請問有推薦的 4 人份套餐或拼盤嗎？",
-                jp: "地元の松葉ガニ（または鳥取和牛）を食べたいです。4人におすすめのセットや盛り合わせはありますか？",
-                romaji: "Jimoto no Matsubagani (matawa Tottori Wagyu) wo tabetai desu. Yo-nin ni osusume no setto wa arimasu ka?"
-            },
-            no_raw: {
-                category: "dining",
-                badge: "🍽️ 點餐實用：結帳 & 分食",
-                zh: "不好意思，請給我們 4 個分享用的小盤子。另外請問可以刷信用卡嗎？",
-                jp: "すみません、取り皿（とりざら）を4枚お願いします。カードは使えますか？",
-                romaji: "Sumimasen, torizara wo yon-mai onegaishimasu. Kaado wa tsukaemasu ka?"
-            },
-            foldseat: {
-                category: "car",
-                badge: "🚐 Day 1 租車取車必用 (VOXY)",
-                zh: "我們有 4 個人和大件行李，可以請您幫我們把「第三排座椅」收摺起來嗎？",
-                jp: "4人で大きい荷物があるので、3列目のシートをたたんでいただけますか？",
-                romaji: "Yo-nin de ookii nimotsu ga aru node, san-retsu-me no shiito wo tatande itadakemasu ka?"
-            },
-            gas: {
-                category: "car",
-                badge: "⛽ Day 4 還車加油站必用",
-                zh: "請幫我把「Regular（紅色一般無鉛汽油）」加滿！並請給我收據（還車檢查用）。",
-                jp: "レギュラー、満タン（まんたん）でお願いします！あと、領収書（レシート）をください。",
-                romaji: "Regyuraa, mantan de onegaishimasu! Ato, ryooshuusho (reshiito) wo kudasai."
-            },
-            airport_car: {
-                category: "car",
-                badge: "🛬 Day 1 米子機場租車櫃檯",
-                zh: "你好，我們有預約 TOYOTA 租車（VOXY Hybrid），請問接駁車在哪裡搭乘？",
-                jp: "トヨタレンタカーを予約しています。送迎バス乗り場はどちらですか？",
-                romaji: "Toyota Rentakaa wo yoyaku shite imasu. Soogei basu noriba wa dochira desu ka?"
-            },
-            parking: {
-                category: "car",
-                badge: "🅿️ 餐廳與景點找停車場",
-                zh: "不好意思，請問這間店的專用停車場在哪裡？",
-                jp: "すみません、お店の専用駐車場（ちゅうしゃじょう）はどこですか？",
-                romaji: "Sumimasen, omise no senyoo chuushajoo wa doko desu ka?"
-            },
-            hotel_checkin: {
-                category: "hotel",
-                badge: "♨️ 飯店 Check-in 與停車",
-                zh: "你好，我們要辦理入住（4人），請問車子停在哪裡？晚餐與溫泉的時間是幾點？",
-                jp: "チェックインをお願いします（4名です）。駐車場はどこですか？",
-                romaji: "Chekku-in wo onegaishimasu (yo-mei desu). Chuushajoo wa doko desu ka?"
-            },
-            goshuin: {
-                category: "hotel",
-                badge: "⛩️ 神社領取御朱印",
-                zh: "不好意思，請幫我寫這本御朱印帳（或請給我神在月限定的御朱印）。",
-                jp: "すみません、こちらの御朱印（ごしゅいん）をお願いします。",
-                romaji: "Sumimasen, kochira no goshuin wo onegaishimasu."
-            }
+            // 👋 基本
+            hello:      P('basic', '你好', 'こんにちは', 'Konnichiwa'),
+            thanks:     P('basic', '謝謝', 'ありがとうございます', 'Arigatou gozaimasu'),
+            excuse:     P('basic', '不好意思／請問一下', 'すみません', 'Sumimasen'),
+            sorry:      P('basic', '對不起', 'ごめんなさい', 'Gomen nasai'),
+            yesno:      P('basic', '是的／不是', 'はい／いいえ', 'Hai / Iie', { say: 'はい。いいえ。' }),
+            ok:         P('basic', '好的，沒問題', '大丈夫です', 'Daijoubu desu'),
+            nojp:       P('basic', '我不太會說日文', '日本語があまり話せません', 'Nihongo ga amari hanasemasen'),
+            slowly:     P('basic', '可以說慢一點嗎？', 'ゆっくり話してもらえますか？', 'Yukkuri hanashite moraemasu ka?'),
+            write:      P('basic', '可以寫下來給我看嗎？', '書いてもらえますか？', 'Kaite moraemasu ka?'),
+            english:    P('basic', '會說英文嗎？', '英語は話せますか？', 'Eigo wa hanasemasu ka?'),
+            taiwan:     P('basic', '我們是從台灣來的', '台湾から来ました', 'Taiwan kara kimashita'),
+            photo_ok:   P('basic', '這裡可以拍照嗎？', '写真を撮ってもいいですか？', 'Shashin wo totte mo ii desu ka?'),
+            photo_us:   P('basic', '可以幫我們拍照嗎？', '写真を撮ってもらえますか？', 'Shashin wo totte moraemasu ka?'),
+
+            // 🍜 餐廳
+            four:       P('dining', '我們 4 個人', '4人です', 'Yonin desu'),
+            noresv:     P('dining', '我們沒有預約', '予約していません', 'Yoyaku shite imasen'),
+            wait:       P('dining', '大概要等多久？', 'どのくらい待ちますか？', 'Dono kurai machimasu ka?'),
+            menu:       P('dining', '請給我菜單', 'メニューをください', 'Menyuu wo kudasai'),
+            menu_en:    P('dining', '有中文或英文菜單嗎？', '中国語か英語のメニューはありますか？', 'Chuugokugo ka eigo no menyuu wa arimasu ka?'),
+            recommend:  P('dining', '有推薦的嗎？', 'おすすめは何ですか？', 'Osusume wa nan desu ka?'),
+            this_one:   P('dining', '我要這個（手指菜單）', 'これをお願いします', 'Kore wo onegaishimasu'),
+            two_this:   P('dining', '這個要兩份', 'これを2つお願いします', 'Kore wo futatsu onegaishimasu'),
+            water:      P('dining', '請給我水', 'お水をください', 'Omizu wo kudasai'),
+            plates:     P('dining', '請給我們小盤子（分著吃）', '取り皿をください', 'Torizara wo kudasai'),
+            noraw:      P('dining', '我不敢吃生的', '生ものが食べられません', 'Namamono ga taberaremasen'),
+            oishii:     P('dining', '很好吃！', 'とてもおいしいです！', 'Totemo oishii desu!'),
+            bill:       P('dining', '麻煩結帳', 'お会計お願いします', 'Okaikei onegaishimasu'),
+            separate:   P('dining', '可以分開付嗎？', '別々に払えますか？', 'Betsubetsu ni haraemasu ka?'),
+            takeout:    P('dining', '可以外帶嗎？', '持ち帰りできますか？', 'Mochikaeri dekimasu ka?'),
+
+            // 🛍️ 購物
+            howmuch:    P('shop', '這個多少錢？', 'これはいくらですか？', 'Kore wa ikura desu ka?'),
+            card:       P('shop', '可以刷卡嗎？', 'カードは使えますか？', 'Kaado wa tsukaemasu ka?'),
+            taxfree:    P('shop', '可以免稅嗎？', '免税できますか？', 'Menzei dekimasu ka?'),
+            other_col:  P('shop', '有其他顏色嗎？', 'ほかの色はありますか？', 'Hoka no iro wa arimasu ka?'),
+            justlook:   P('shop', '我只是看看', '見ているだけです', 'Mite iru dake desu'),
+            nobag:      P('shop', '不用袋子', '袋はいりません', 'Fukuro wa irimasen'),
+            bag:        P('shop', '請給我袋子', '袋をください', 'Fukuro wo kudasai'),
+            gift:       P('shop', '可以幫我包成送禮用的嗎？', 'プレゼント用に包んでもらえますか？', 'Purezento-you ni tsutsunde moraemasu ka?'),
+            receipt:    P('shop', '請給我收據', 'レシートをください', 'Reshiito wo kudasai'),
+            goshuin2:   P('shop', '（神社）請幫我寫御朱印', '御朱印をお願いします', 'Goshuin wo onegaishimasu'),
+
+            // 🚶 問路交通
+            toilet:     P('move', '廁所在哪裡？', 'トイレはどこですか？', 'Toire wa doko desu ka?'),
+            here:       P('move', '這個地方要怎麼去？（手指地圖）', 'ここへはどうやって行きますか？', 'Koko e wa dou yatte ikimasu ka?'),
+            walk:       P('move', '走路到得了嗎？', '歩いて行けますか？', 'Aruite ikemasu ka?'),
+            howlong:    P('move', '要多久時間？', 'どのくらいかかりますか？', 'Dono kurai kakarimasu ka?'),
+            station:    P('move', '車站在哪裡？', '駅はどこですか？', 'Eki wa doko desu ka?'),
+            konbini:    P('move', '附近有便利商店嗎？', '近くにコンビニはありますか？', 'Chikaku ni konbini wa arimasu ka?'),
+            taxi_call:  P('move', '可以幫我叫計程車嗎？', 'タクシーを呼んでもらえますか？', 'Takushii wo yonde moraemasu ka?'),
+            taxi_go:    P('move', '（計程車）請到這個地址', 'この住所までお願いします', 'Kono juusho made onegaishimasu'),
+
+            // 🚐 開車
+            park_where: P('car', '停車場在哪裡？', '駐車場はどこですか？', 'Chuushajou wa doko desu ka?'),
+            park_ok:    P('car', '車可以停在這裡嗎？', 'ここに車を停めてもいいですか？', 'Koko ni kuruma wo tomete mo ii desu ka?'),
+            park_fee:   P('car', '停車費多少錢？', '駐車料金はいくらですか？', 'Chuusha ryoukin wa ikura desu ka?'),
+            fillup:     P('car', '一般汽油，加滿', 'レギュラー満タンでお願いします', 'Regyuraa mantan de onegaishimasu'),
+            rental:     P('car', '我有預約租車', 'レンタカーを予約しています', 'Rentakaa wo yoyaku shite imasu'),
+            carhelp:    P('car', '車子出問題了', '車が故障しました', 'Kuruma ga koshou shimashita'),
+
+            // ♨️ 飯店
+            checkin:    P('hotel', '我要辦理入住', 'チェックインお願いします', 'Chekku-in onegaishimasu'),
+            luggage:    P('hotel', '可以幫我寄放行李嗎？', '荷物を預かってもらえますか？', 'Nimotsu wo azukatte moraemasu ka?'),
+            breakfast:  P('hotel', '早餐幾點開始？', '朝食は何時からですか？', 'Choushoku wa nanji kara desu ka?'),
+            bath:       P('hotel', '溫泉開到幾點？', 'お風呂は何時までですか？', 'Ofuro wa nanji made desu ka?'),
+            wifi:       P('hotel', 'Wi-Fi 密碼是什麼？', 'Wi-Fiのパスワードを教えてください', 'Wai-fai no pasuwaado wo oshiete kudasai', { say: 'ワイファイのパスワードを教えてください' }),
+            checkout:   P('hotel', '我要退房', 'チェックアウトお願いします', 'Chekku-auto onegaishimasu'),
+
+            // 🆘 緊急
+            help:       P('sos', '請幫幫我！', '助けてください！', 'Tasukete kudasai!'),
+            ambulance:  P('sos', '請叫救護車', '救急車を呼んでください', 'Kyuukyuusha wo yonde kudasai'),
+            sick:       P('sos', '我身體不舒服', '気分が悪いです', 'Kibun ga warui desu'),
+            pharmacy:   P('sos', '附近有藥局嗎？', '近くに薬局はありますか？', 'Chikaku ni yakkyoku wa arimasu ka?'),
+            hospital:   P('sos', '附近有醫院嗎？', '近くに病院はありますか？', 'Chikaku ni byouin wa arimasu ka?'),
+            lost_item:  P('sos', '我的錢包不見了', '財布をなくしました', 'Saifu wo nakushimashita'),
+            lost_way:   P('sos', '我迷路了', '道に迷いました', 'Michi ni mayoimashita'),
+            police:     P('sos', '派出所在哪裡？', '交番はどこですか？', 'Kouban wa doko desu ka?'),
+
+            // 🗾 這趟專用（行程卡片上的按鈕會打開這些）
+            walkin4:      P('trip', '不好意思，我們沒有預約，現在 4 個人有位子嗎？', 'すみません、予約していませんが、4人入れますか？', 'Sumimasen, yoyaku shite imasen ga, yonin hairemasu ka?', { badge: '🦀 沒訂位進餐廳' }),
+            waitlist:     P('trip', '我們可以等。名字要寫在哪裡？大概要等多久？', '待ちます。名前はどこに書きますか？どのくらい待ちますか？', 'Machimasu. Namae wa doko ni kakimasu ka? Dono kurai machimasu ka?', { badge: '📝 客滿候位' }),
+            soba:         P('trip', '請給我們「三段割子蕎麥麵」，還有推薦什麼？', '三段割子そばをお願いします。おすすめは何ですか？', 'Sandan warigo soba wo onegaishimasu. Osusume wa nan desu ka?', { badge: '🍜 出雲蕎麥麵' }),
+            crab_meat:    P('trip', '我們想吃松葉蟹或鳥取和牛，有適合 4 個人的套餐嗎？', '松葉ガニか鳥取和牛を食べたいです。4人におすすめのセットはありますか？', 'Matsubagani ka Tottori wagyuu wo tabetai desu. Yonin ni osusume no setto wa arimasu ka?', { badge: '🦀 螃蟹／和牛' }),
+            no_raw:       P('trip', '請給我們 4 個小盤子。可以刷卡嗎？', '取り皿を4枚お願いします。カードは使えますか？', 'Torizara wo yonmai onegaishimasu. Kaado wa tsukaemasu ka?', { badge: '🍽️ 分食＆刷卡' }),
+            airport_car:  P('trip', '我們有預約 TOYOTA 租車，接駁車在哪裡搭？', 'トヨタレンタカーを予約しています。送迎バスの乗り場はどこですか？', 'Toyota rentakaa wo yoyaku shite imasu. Sougei basu no noriba wa doko desu ka?', { badge: '🛬 米子機場租車' }),
+            foldseat:     P('trip', '我們 4 個人有大行李，可以幫忙把第三排座椅收起來嗎？', '4人で大きい荷物があるので、3列目のシートをたたんでもらえますか？', 'Yonin de ookii nimotsu ga aru node, sanretsume no shiito wo tatande moraemasu ka?', { badge: '🚐 取車收座椅' }),
+            gas:          P('trip', '一般汽油加滿，請給我收據（還車要用）', 'レギュラー満タンでお願いします。レシートをください。', 'Regyuraa mantan de onegaishimasu. Reshiito wo kudasai.', { badge: '⛽ 還車前加油' }),
+            parking:      P('trip', '請問店家的停車場在哪裡？', 'お店の駐車場はどこですか？', 'Omise no chuushajou wa doko desu ka?', { badge: '🅿️ 找店家停車場' }),
+            hotel_checkin:P('trip', '我們要辦入住，4 個人。車要停在哪裡？', 'チェックインお願いします。4人です。駐車場はどこですか？', 'Chekku-in onegaishimasu. Yonin desu. Chuushajou wa doko desu ka?', { badge: '♨️ 飯店入住' }),
+            goshuin:      P('trip', '請幫我寫這裡的御朱印', 'こちらの御朱印をお願いします', 'Kochira no goshuin wo onegaishimasu', { badge: '⛩️ 神社御朱印' })
         };
 
         // ==================== 3. STATE & FONT SCALING ====================
@@ -1138,45 +1165,47 @@
         }
 
         // ==================== 5. JAPANESE HELPER & TTS ====================
+        const JP_PILL_ON = "pixel-btn bg-[#E07A2E] text-white text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font";
+        const JP_PILL_OFF = "pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font";
+
+        function renderJpCategoryPills() {
+            const wrap = document.getElementById('jp-cat-pills');
+            if (!wrap) return;
+            const cats = [{ id: 'all', label: '全部' }, ...JP_CATEGORIES];
+            wrap.innerHTML = cats.map(c => `
+                <button onclick="filterJapaneseCards('${c.id}')" class="${c.id === currentJpCategory ? JP_PILL_ON : JP_PILL_OFF}">${c.label}</button>
+            `).join('');
+        }
+
         function filterJapaneseCards(category) {
             currentJpCategory = category;
-            ['all', 'dining', 'car', 'hotel'].forEach(cat => {
-                const btn = document.getElementById(`jp-cat-${cat}`);
-                if (cat === category) {
-                    btn.className = "pixel-btn bg-[#E07A2E] text-white text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font";
-                } else {
-                    btn.className = "pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font";
-                }
-            });
             renderJapaneseCards();
         }
 
         function renderJapaneseCards() {
+            renderJpCategoryPills();
             const list = document.getElementById('japanese-cards-list');
-            const entries = Object.entries(japaneseCards).filter(([k, item]) => {
-                return currentJpCategory === 'all' || item.category === currentJpCategory;
-            });
-
-            list.innerHTML = entries.map(([key, item]) => `
-                <div class="pixel-box p-4 space-y-2.5 bg-white hover:bg-[#FFFDF9] transition">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <span class="bg-[#FCE4B8] text-[#4A2E1B] border border-[#4A2E1B] text-xs font-bold px-2.5 py-1 rounded pixel-font">${item.badge}</span>
-                        <div class="flex gap-2">
-                            <button onclick="speakJapanese('${item.jp.replace(/'/g, "\\'")}')" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
-                                <i class="fa-solid fa-volume-high"></i> 發音
-                            </button>
-                            <button onclick="openFlashcardModal('${key}')" class="pixel-btn bg-[#D63E2F] text-white text-sm px-3 py-1.5 font-bold flex items-center gap-1.5">
-                                <i class="fa-solid fa-expand"></i> 全螢幕放大
-                            </button>
-                        </div>
-                    </div>
-                    <div class="text-sm font-bold text-[#6E472B]">🇹🇼 ${item.zh}</div>
-                    <div onclick="openFlashcardModal('${key}')" class="bg-[#FFF8E7] p-3.5 rounded border-2 border-[#4A2E1B] cursor-pointer">
-                        <div class="text-lg font-black text-[#231815] leading-snug">${item.jp}</div>
-                        <div class="text-xs text-[#D63E2F] font-mono font-bold mt-1">${item.romaji}</div>
-                    </div>
-                </div>
-            `).join('');
+            const cats = currentJpCategory === 'all' ? JP_CATEGORIES : JP_CATEGORIES.filter(c => c.id === currentJpCategory);
+            list.innerHTML = cats.map(cat => {
+                const entries = Object.entries(japaneseCards).filter(([, item]) => item.category === cat.id);
+                if (!entries.length) return '';
+                return `
+                <div class="space-y-2">
+                    <div class="text-base font-black text-[#4A2E1B] pixel-font pt-1">${cat.label}</div>
+                    ${entries.map(([key, item]) => `
+                    <div class="pixel-box bg-white flex items-stretch">
+                        <button onclick="openFlashcardModal('${key}')" class="flex-1 text-left p-3 min-w-0">
+                            ${item.badge ? `<span class="inline-block bg-[#FCE4B8] text-[#4A2E1B] border border-[#4A2E1B] text-xs font-bold px-2 py-0.5 rounded pixel-font mb-1">${item.badge}</span>` : ''}
+                            <div class="text-sm font-bold text-[#6E472B]">${item.zh}</div>
+                            <div class="text-lg font-black text-[#231815] leading-snug mt-0.5">${item.jp}</div>
+                            <div class="text-xs text-[#D63E2F] font-mono font-bold mt-0.5">${item.romaji}</div>
+                        </button>
+                        <button onclick="speakJapanese('${key}')" aria-label="播放日文" class="shrink-0 w-14 border-l-2 border-[#4A2E1B] bg-[#388E3C] text-white text-xl flex items-center justify-center">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>`).join('')}
+                </div>`;
+            }).join('');
         }
 
         function openFlashcardModal(key) {
@@ -1186,7 +1215,7 @@
             document.getElementById('modal-jp').innerText = item.jp;
             document.getElementById('modal-romaji').innerText = item.romaji;
             const speakBtn = document.getElementById('modal-speak-btn');
-            speakBtn.onclick = () => speakJapanese(item.jp);
+            speakBtn.onclick = () => speakJapanese(key);
 
             const modal = document.getElementById('flashcard-modal');
             modal.classList.remove('hidden');
@@ -1199,17 +1228,44 @@
             modal.classList.remove('flex');
         }
 
-        function speakJapanese(text) {
+        // 手機（尤其 iPhone）只設 lang 不一定會換成日文聲音，常常用系統預設的中文聲音去唸，
+        // 所以要從手機內建的聲音清單裡「指定」一個日文聲音
+        let jaVoice = null;
+        function pickJapaneseVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices();
+            const ja = voices.filter(v => /^ja([-_]|$)/i.test(v.lang));
+            // 偏好順序：Kyoko / O-ren / Google 日本語 / 其他日文聲音
+            jaVoice = ja.find(v => /kyoko/i.test(v.name)) || ja.find(v => /o-?ren/i.test(v.name))
+                || ja.find(v => /google/i.test(v.name)) || ja[0] || null;
+            return jaVoice;
+        }
+        if ('speechSynthesis' in window) {
+            pickJapaneseVoice();
+            window.speechSynthesis.addEventListener?.('voiceschanged', pickJapaneseVoice);
+        }
+
+        function speakJapanese(keyOrText) {
+            const item = japaneseCards[keyOrText];
+            // 括號裡的讀音、手指提示不要唸出來
+            const text = (item ? (item.say || item.jp) : String(keyOrText)).replace(/（[^）]*）/g, '');
             try {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'ja-JP';
-                    utterance.rate = 0.9;
-                    window.speechSynthesis.speak(utterance);
-                    showToast("🔊 正在播放日文語音汪！");
+                if (!('speechSynthesis' in window)) {
+                    showToast("這支手機不支援語音，請直接把大字卡給店員看！");
+                    return;
+                }
+                const synth = window.speechSynthesis;
+                synth.cancel();
+                const voice = jaVoice || pickJapaneseVoice();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                if (voice) utterance.voice = voice;
+                utterance.rate = 0.85;
+                synth.speak(utterance);
+                if (voice) {
+                    showToast("🔊 播放日文中汪！");
                 } else {
-                    showToast("您的瀏覽器不支援語音合成，請直接將畫面出示給店員看！");
+                    showToast("⚠️ 手機找不到日文聲音：iPhone 到「設定 → 輔助使用 → 朗讀內容 → 聲音 → 日文」下載 Kyoko");
                 }
             } catch (e) {
                 showToast("請直接將大字卡畫面出示給店員看喔！");
@@ -1533,7 +1589,7 @@
             toastTimer = setTimeout(() => {
                 toast.classList.add('hidden');
                 toast.classList.remove('flex');
-            }, 2600);
+            }, msg.length > 30 ? 6000 : 2600);
         }
 
         // Initialize App on Load

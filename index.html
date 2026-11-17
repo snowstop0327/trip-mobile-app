@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=1">
+    <link rel="stylesheet" href="css/app.css?v=2">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -130,7 +130,7 @@
                         <h2 class="text-base font-bold pixel-font flex items-center gap-2">
                             <i class="fa-solid fa-language"></i> 柴柴日文手指大字卡
                         </h2>
-                        <p class="text-xs text-white/95 mt-0.5">點卡片可「全螢幕放大」給店員看，或點發音替你說日文！</p>
+                        <p class="text-xs text-white/95 mt-0.5">點句子可放大給店員看，點綠色喇叭聽日文發音！</p>
                     </div>
                     <!-- Roaming Translator Shiba SVG -->
                     <div class="w-12 h-12 bg-[#FFF8E7] border-2 border-[#4A2E1B] rounded p-1 flex items-center justify-center flex-shrink-0 shiba-bounce" title="翻譯官豆助">
@@ -148,13 +148,8 @@
                     </div>
                 </div>
 
-                <!-- Category Filter Pills -->
-                <div class="flex gap-2 overflow-x-auto pb-1.5">
-                    <button onclick="filterJapaneseCards('all')" id="jp-cat-all" class="pixel-btn bg-[#E07A2E] text-white text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">全部實用句</button>
-                    <button onclick="filterJapaneseCards('dining')" id="jp-cat-dining" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">🦀 餐廳無預訂候位/點餐</button>
-                    <button onclick="filterJapaneseCards('car')" id="jp-cat-car" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">🚐 租車/加油/停車</button>
-                    <button onclick="filterJapaneseCards('hotel')" id="jp-cat-hotel" class="pixel-btn bg-white text-[#4A2E1B] text-sm font-bold px-3.5 py-2 whitespace-nowrap pixel-font">♨️ 飯店與神社購物</button>
-                </div>
+                <!-- Category Filter Pills（由 js 產生） -->
+                <div id="jp-cat-pills" class="flex gap-2 overflow-x-auto pb-1.5"></div>
 
                 <!-- Japanese Phrase Cards Container -->
                 <div id="japanese-cards-list" class="space-y-3.5">
@@ -838,6 +833,6 @@
 
     </div>
 
-    <script src="js/app.js?v=1"></script>
+    <script src="js/app.js?v=2"></script>
 </body>
 </html>
