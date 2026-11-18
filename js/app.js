@@ -1760,11 +1760,35 @@
 
             if (nextState) {
                 pop.classList.remove('hidden');
+                document.getElementById('shiba-fab-btn')?.classList.remove('fab-collapsed');
                 if (dot) dot.classList.add('hidden');
             } else {
                 pop.classList.add('hidden');
             }
         }
+
+        // 往下滑收起柴柴、往上滑（或回到頂端）展開；打開對話框時不收
+        (function setupShibaFabAutoCollapse() {
+            let lastY = window.scrollY, ticking = false;
+            function setCollapsed(v) {
+                const btn = document.getElementById('shiba-fab-btn');
+                if (btn && btn.classList.contains('fab-collapsed') !== v) btn.classList.toggle('fab-collapsed', v);
+            }
+            function onScroll() {
+                const y = window.scrollY;
+                const dy = y - lastY;
+                const pop = document.getElementById('shiba-popover');
+                const popOpen = pop && !pop.classList.contains('hidden');
+                if (popOpen || y < 60) setCollapsed(false);
+                else if (dy > 6) setCollapsed(true);
+                else if (dy < -6) setCollapsed(false);
+                if (Math.abs(dy) > 6 || y < 60) lastY = y;
+                ticking = false;
+            }
+            window.addEventListener('scroll', () => {
+                if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+            }, { passive: true });
+        })();
 
         function pokeShiba() {
             const randomQuote = shibaQuotes[Math.floor(Math.random() * shibaQuotes.length)];

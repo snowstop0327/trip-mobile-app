@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=5">
+    <link rel="stylesheet" href="css/app.css?v=6">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -448,7 +448,7 @@
             </div>
 
             <!-- Floating Shiba Avatar Button (Bottom Right) -->
-            <button onclick="toggleShibaPopover()" id="shiba-fab-btn" class="pointer-events-auto group relative flex items-center gap-1.5 bg-[#FFF8E7] hover:bg-[#FCE4B8] border-3 border-[#4A2E1B] rounded-full p-1.5 pr-3 shadow-[4px_4px_0px_#4A2E1B] active:translate-y-0.5 transition-all">
+            <button onclick="toggleShibaPopover()" id="shiba-fab-btn" class="pointer-events-auto group relative flex items-center gap-1.5 bg-[#FFF8E7] hover:bg-[#FCE4B8] border-3 border-[#4A2E1B] rounded-full p-1.5 pr-3 shadow-[4px_4px_0px_#4A2E1B] active:translate-y-0.5">
                 <!-- Notification Dot -->
                 <span id="shiba-notif-dot" class="absolute -top-1 -left-1 w-3.5 h-3.5 bg-[#D63E2F] border-2 border-[#4A2E1B] rounded-full animate-ping"></span>
                 <span class="absolute -top-1 -left-1 w-3.5 h-3.5 bg-[#D63E2F] border-2 border-[#4A2E1B] rounded-full"></span>
@@ -487,7 +487,7 @@
                         <rect x="7" y="12" width="2" height="2" fill="#F5B041"/>
                     </svg>
                 </div>
-                <div class="text-left">
+                <div id="shiba-fab-label" class="text-left">
                     <div class="text-xs font-black text-[#4A2E1B] pixel-font leading-none">柴柴幫手</div>
                     <div id="shiba-fab-status" class="text-[11px] font-bold text-[#D63E2F] leading-tight mt-0.5">點我問問題</div>
                 </div>
@@ -677,6 +677,6 @@
 
     </div>
 
-    <script src="js/app.js?v=5"></script>
+    <script src="js/app.js?v=6"></script>
 </body>
 </html>
