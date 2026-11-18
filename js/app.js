@@ -1327,8 +1327,81 @@
             showToast("已刪除該筆帳目");
         }
 
+        // ==================== 最新匯率（日幣 → 台幣）====================
+        // 免費、免申請 key 的國際中間價（每天更新）；抓不到就用上次存的值。
+        // 使用者自己改過匯率時，以他填的為準，另外顯示最新值讓他一鍵套用。
+        const FX_DEFAULT = 0.215;
+        let fxLatest = null; // { rate, date }
+        try { fxLatest = JSON.parse(localStorage.getItem('sanin_fx_latest_v1')); } catch (e) {}
+        function getFxManual() { const v = parseFloat(localStorage.getItem('sanin_fx_manual_v1')); return v > 0 ? v : null; }
+        function applyFxRateToInput() {
+            const input = document.getElementById('fx-rate-input');
+            if (!input) return;
+            const manual = getFxManual();
+            input.value = manual || (fxLatest && fxLatest.rate) || FX_DEFAULT;
+            renderFxStatus();
+        }
+        function renderFxStatus(loading) {
+            const box = document.getElementById('fx-rate-status');
+            if (!box) return;
+            const manual = getFxManual();
+            let left;
+            if (loading && !fxLatest) left = '🔄 正在抓最新匯率…';
+            else if (!fxLatest) left = '⚠️ 沒抓到最新匯率，先用預設 ' + FX_DEFAULT;
+            else if (manual) left = `✏️ 用你填的匯率；最新是 <b class="text-[#F5B041] font-mono">${fxLatest.rate}</b>（${fxLatest.date}）`;
+            else left = `✅ 最新匯率（${fxLatest.date}）${loading ? '・更新中…' : ''}`;
+            const btn = manual && fxLatest
+                ? `<button onclick="useLatestFxRate()" class="underline text-[#F5B041] whitespace-nowrap">改用最新</button>`
+                : `<button onclick="refreshFxRate(true)" class="underline text-gray-300 whitespace-nowrap">重新抓</button>`;
+            box.innerHTML = `<span>${left}</span>${btn}`;
+        }
+        async function fetchFxRate() {
+            // 主來源：open.er-api.com；備援：jsdelivr 上的 currency-api
+            try {
+                const r = await fetch('https://open.er-api.com/v6/latest/JPY', { cache: 'no-store' });
+                const d = await r.json();
+                if (d.result === 'success' && d.rates && d.rates.TWD > 0) {
+                    const t = new Date(d.time_last_update_unix * 1000);
+                    return { rate: +d.rates.TWD.toFixed(4), date: `${t.getMonth() + 1}/${t.getDate()}` };
+                }
+            } catch (e) {}
+            const r = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/jpy.json', { cache: 'no-store' });
+            const d = await r.json();
+            if (!(d.jpy && d.jpy.twd > 0)) throw new Error('no rate');
+            const [, m, day] = String(d.date).split('-');
+            return { rate: +d.jpy.twd.toFixed(4), date: `${+m}/${+day}` };
+        }
+        async function refreshFxRate(userAsked) {
+            if (!navigator.onLine) { if (userAsked) showToast('📴 沒網路，先用上次的匯率'); return; }
+            renderFxStatus(true);
+            try {
+                fxLatest = await fetchFxRate();
+                try { localStorage.setItem('sanin_fx_latest_v1', JSON.stringify(fxLatest)); } catch (e) {}
+                applyFxRateToInput();
+                updateExpenseUI();
+                if (userAsked) showToast(`✅ 已更新：1 日圓 ≈ ${fxLatest.rate} 台幣`);
+            } catch (e) {
+                renderFxStatus();
+                if (userAsked) showToast('⚠️ 抓不到匯率，稍後再試');
+            }
+        }
+        function onFxRateManualChange() {
+            const v = parseFloat(document.getElementById('fx-rate-input').value);
+            try {
+                if (v > 0 && !(fxLatest && v === fxLatest.rate)) localStorage.setItem('sanin_fx_manual_v1', String(v));
+                else localStorage.removeItem('sanin_fx_manual_v1');
+            } catch (e) {}
+            renderFxStatus();
+            updateExpenseUI();
+        }
+        function useLatestFxRate() {
+            try { localStorage.removeItem('sanin_fx_manual_v1'); } catch (e) {}
+            applyFxRateToInput();
+            updateExpenseUI();
+        }
+
         function updateExpenseUI() {
-            const rate = parseFloat(document.getElementById('fx-rate-input').value) || 0.215;
+            const rate = parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT;
             const totalJpy = expenses.reduce((sum, e) => sum + e.amount, 0);
             const perPersonJpy = totalJpy / 4;
             const perPersonTwd = Math.round(perPersonJpy * rate);
@@ -1403,7 +1476,7 @@
         }
 
         function exportExpensesToLine() {
-            const rate = parseFloat(document.getElementById('fx-rate-input').value) || 0.215;
+            const rate = parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT;
             const totalJpy = expenses.reduce((sum, e) => sum + e.amount, 0);
             const perPersonTwd = Math.round((totalJpy / 4) * rate);
 
@@ -1750,6 +1823,9 @@
             }, 60000);
             renderJapaneseCards();
             renderGuide();
+            applyFxRateToInput();
+            updateExpenseUI();
+            refreshFxRate(false);
             renderMembersAndExpenses();
             renderChecklist();
         };

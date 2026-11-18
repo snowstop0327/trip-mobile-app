@@ -1,17 +1,17 @@
 /* 山陰秘書 Service Worker：讓網頁 App 在沒網路時也能打開
  * - 自己網站的檔案：先抓網路最新版，沒網路才用快取（所以更新後重開就是新版）
  * - 字型、圖示、景點照片：用快取優先（省流量、離線也看得到）
- * - 天氣與維基 API：直接走網路（App 本身已存在手機裡）
+ * - 天氣、匯率 API：直接走網路（App 本身已存在手機裡）
  * 改了檔案想強迫大家更新時，把 VERSION 加 1 即可。
  */
-const VERSION = 'v4';
+const VERSION = 'v5';
 const APP_CACHE = `sanin-app-${VERSION}`;
 const ASSET_CACHE = 'sanin-assets';
 const APP_SHELL = [
   './',
   './index.html',
-  './css/app.css?v=4',
-  './js/app.js?v=4',
+  './css/app.css?v=5',
+  './js/app.js?v=5',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
