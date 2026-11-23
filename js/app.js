@@ -811,7 +811,10 @@
         }
 
         function selectDay(day, opts = {}) {
+            const dayChanged = day !== currentDay;
             currentDay = day;
+            // 換到別天時從頭開始看
+            if (dayChanged && !opts.keepScroll) window.scrollTo({ top: 0, behavior: 'auto' });
             for (let i = 1; i <= 4; i++) {
                 const btn = document.getElementById(`day-btn-${i}`);
                 const isToday = getTodayTripDay() === i;
