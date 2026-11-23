@@ -569,9 +569,24 @@
         // Load or initialize expenses
         let expenses = JSON.parse(localStorage.getItem('sanin_expenses_v2')) || [
             { id: 1, title: "🚐 TOYOTA VOXY Hybrid 租車(含雪胎全險)", amount: 67606, payer: 0 },
-            { id: 2, title: "🍜 羽根屋 割子蕎麥麵 (4人預估)", amount: 4000, payer: 0 },
-            { id: 3, title: "🏯 松江城登閣門票 (4人預估)", amount: 2720, payer: 1 }
         ];
+        // 三間飯店房錢（確認信金額）
+        const HOTEL_EXPENSES = [
+            { id: 9001, title: "🏨 御宿 野乃 境港（2 間・含早餐）", amount: 67200, currency: 'JPY', payer: 0 },
+            { id: 9002, title: "🏨 星野 界 出雲（2 間・含早晚餐・已刷卡預付）", amount: 196400, currency: 'JPY', payer: 0 },
+            { id: 9003, title: "🏨 Super Hotel 米子駅前（4 間・含早餐・現場付款）", amount: 30510, currency: 'JPY', payer: 0 }
+        ];
+        // 一次性：把房錢加進分帳本，並拿掉原本示範用的「預估」項目
+        (function addHotelExpenses(){
+            if (localStorage.getItem('sanin_expense_hotels_v1')) return;
+            expenses = expenses.filter(e => !/預估/.test(e.title));
+            const has = new Set(expenses.map(e => e.id));
+            HOTEL_EXPENSES.forEach(h => { if (!has.has(h.id)) expenses.push({ ...h }); });
+            try {
+                localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
+                localStorage.setItem('sanin_expense_hotels_v1', '1');
+            } catch (e) {}
+        })();
 
         // Load or initialize packing checklist
         const defaultChecklist = [
@@ -672,10 +687,10 @@
         // 資料來源：https://www.jma.go.jp/bosai/forecast/data/forecast/{府縣代碼}.json（官方開放、允許網頁直接讀取）
         // office：府縣（310000 鳥取、320000 島根）；area：短期預報區域；temp：短期預報的氣溫觀測點
         const DAY_WEATHER_SPOT = {
-            1: { name: '境港', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
-            2: { name: '松江', office: '320000', area: '320010', temp: '68132', sunset: '16:57' },
-            3: { name: '米子', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
-            4: { name: '米子', office: '310000', area: '310020', temp: '69076', sunset: '16:54' }
+            1: { name: '境港', tenki: '7/34/6920/31204', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
+            2: { name: '松江', tenki: '7/35/6810/32201', office: '320000', area: '320010', temp: '68132', sunset: '16:57' },
+            3: { name: '米子', tenki: '7/34/6920/31202', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
+            4: { name: '米子', tenki: '7/34/6920/31202', office: '310000', area: '310020', temp: '69076', sunset: '16:54' }
         };
         let weatherCache = {};
         try { weatherCache = JSON.parse(localStorage.getItem('sanin_weather_jma_v1')) || {}; } catch (e) {}
@@ -775,10 +790,11 @@
             const spot = DAY_WEATHER_SPOT[day];
             const w = weatherCache[`${day}_${TRIP_DATES[day]}`];
             const sunset = `<span>🌇 日落 ${spot.sunset}</span>`;
-            if (!w) return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold">⛅ ${spot.name}天氣讀取中…</div>`;
+            const tenki = `<a href="https://tenki.jp/forecast/${spot.tenki}/10days.html" target="_blank" rel="noopener" class="inline-block bg-white text-[#2B5B84] rounded px-2 py-0.5 text-xs font-black whitespace-nowrap">tenki.jp 看詳細 ↗</a>`;
+            if (!w) return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold flex flex-wrap gap-x-3 gap-y-0.5 items-center"><span>⛅ ${spot.name}天氣讀取中…</span>${tenki}</div>`;
             if (w.na) {
                 const wait = Math.max(1, (w.daysAhead ?? 8) - 7);
-                return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold flex flex-wrap gap-x-3 gap-y-0.5 items-center"><span>⛅ ${spot.name}：氣象廳週間預報再 ${wait} 天後開放（出發前 7 天內自動顯示）・12 月平均約 4~11°C</span>${sunset}</div>`;
+                return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold flex flex-wrap gap-x-3 gap-y-0.5 items-center"><span>⛅ ${spot.name}：氣象廳週間預報再 ${wait} 天後開放（出發前 7 天內自動顯示）・12 月平均約 4~11°C</span>${sunset}${tenki}</div>`;
             }
             const [icon, label] = weatherIcon(w.code);
             const has = v => v !== null && v !== undefined;
@@ -789,7 +805,7 @@
                 <span>${icon} ${spot.name} ${label}</span>
                 ${temp ? `<span class="font-mono">${temp}</span>` : ''}
                 <span>☔ ${w.rain ?? '-'}%</span>
-                ${sunset}${cold}
+                ${sunset}${cold}${tenki}
                 <span class="w-full text-xs opacity-80 font-medium">資料：日本氣象廳 ${w.source}${rel ? '・' + rel : ''}${w.tempFrom && w.tempFrom !== spot.name ? `・氣溫為${w.tempFrom}市預報` : ''}</span>
             </div>`;
         }
@@ -1356,11 +1372,12 @@
             const payerEl = document.getElementById('exp-payer');
 
             const title = titleEl.value.trim();
-            const amount = parseInt(amountEl.value, 10);
+            const amount = Math.round(parseFloat(amountEl.value));
             const payer = parseInt(payerEl.value, 10);
+            const currency = document.getElementById('exp-currency').value === 'TWD' ? 'TWD' : 'JPY';
 
             if (!title || isNaN(amount) || amount <= 0) {
-                showToast("汪！請輸入項目名稱與正確的日幣金額！");
+                showToast("汪！請輸入項目名稱與正確的金額！");
                 return;
             }
 
@@ -1368,6 +1385,7 @@
                 id: Date.now(),
                 title,
                 amount,
+                currency,
                 payer
             });
             localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
@@ -1457,45 +1475,54 @@
             updateExpenseUI();
         }
 
+        // 每筆帳都換算成台幣來分（日幣 × 匯率；台幣直接用）
+        function getRate() { return parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT; }
+        function expTwd(e, rate) { return e.currency === 'TWD' ? e.amount : e.amount * rate; }
+        function fmtAmount(e) { return e.currency === 'TWD' ? `NT$ ${e.amount.toLocaleString()}` : `¥${e.amount.toLocaleString()}`; }
+        function getSplitSummary() {
+            const rate = getRate();
+            const totalTwd = expenses.reduce((sum, e) => sum + expTwd(e, rate), 0);
+            const totalJpyOnly = expenses.filter(e => e.currency !== 'TWD').reduce((s2, e) => s2 + e.amount, 0);
+            const totalTwdOnly = expenses.filter(e => e.currency === 'TWD').reduce((s2, e) => s2 + e.amount, 0);
+            const perPerson = totalTwd / members.length;
+            const paid = members.map(() => 0);
+            expenses.forEach(e => { if (paid[e.payer] !== undefined) paid[e.payer] += expTwd(e, rate); });
+            return { rate, totalTwd, totalJpyOnly, totalTwdOnly, perPerson, paid, transfers: computeTransfers(paid, perPerson) };
+        }
+
         function updateExpenseUI() {
-            const rate = parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT;
-            const totalJpy = expenses.reduce((sum, e) => sum + e.amount, 0);
-            const perPersonJpy = totalJpy / 4;
-            const perPersonTwd = Math.round(perPersonJpy * rate);
+            const S = getSplitSummary();
+            const r = v => Math.round(v).toLocaleString();
 
-            document.getElementById('total-jpy').innerText = `¥${totalJpy.toLocaleString()}`;
-            document.getElementById('per-person-twd').innerText = `NT$ ${perPersonTwd.toLocaleString()}`;
-
-            const paidByMember = [0, 0, 0, 0];
-            expenses.forEach(e => {
-                if (paidByMember[e.payer] !== undefined) {
-                    paidByMember[e.payer] += e.amount;
-                }
-            });
+            document.getElementById('total-twd').innerText = `NT$ ${r(S.totalTwd)}`;
+            const parts = [];
+            if (S.totalJpyOnly) parts.push(`日幣 ¥${S.totalJpyOnly.toLocaleString()}`);
+            if (S.totalTwdOnly) parts.push(`台幣 NT$${S.totalTwdOnly.toLocaleString()}`);
+            document.getElementById('total-breakdown').innerText = parts.join(' ＋ ');
+            document.getElementById('per-person-twd').innerText = `NT$ ${r(S.perPerson)}`;
 
             const settlementBox = document.getElementById('settlement-box');
-            settlementBox.innerHTML = `<div class="text-[#F5B041] font-bold mb-1">⚖️ 每人應分攤 ¥${Math.round(perPersonJpy).toLocaleString()} (約 NT$${perPersonTwd.toLocaleString()})：</div>` +
+            settlementBox.innerHTML = `<div class="text-[#F5B041] font-bold mb-1">⚖️ 每人應分攤 NT$ ${r(S.perPerson)}（約 ¥${r(S.perPerson / S.rate)}）：</div>` +
                 members.map((m, idx) => {
-                    const diffJpy = Math.round(paidByMember[idx] - perPersonJpy);
-                    const diffTwd = Math.round(diffJpy * rate);
-                    if (diffJpy > 0) {
-                        return `<div class="flex justify-between"><span>🟢 ${m} (已墊 ¥${paidByMember[idx].toLocaleString()})</span><span class="text-[#4CAF50] font-bold">應收回 NT$ ${diffTwd.toLocaleString()}</span></div>`;
-                    } else if (diffJpy < 0) {
-                        return `<div class="flex justify-between"><span>🔸 ${m} (已墊 ¥${paidByMember[idx].toLocaleString()})</span><span class="text-[#FF8A80] font-bold">需給出 NT$ ${Math.abs(diffTwd).toLocaleString()}</span></div>`;
+                    const diff = Math.round(S.paid[idx] - S.perPerson);
+                    if (diff > 0) {
+                        return `<div class="flex justify-between gap-2"><span>🟢 ${esc(m)}（已墊 NT$ ${r(S.paid[idx])}）</span><span class="text-[#4CAF50] font-bold whitespace-nowrap">應收回 NT$ ${diff.toLocaleString()}</span></div>`;
+                    } else if (diff < 0) {
+                        return `<div class="flex justify-between gap-2"><span>🔸 ${esc(m)}（已墊 NT$ ${r(S.paid[idx])}）</span><span class="text-[#FF8A80] font-bold whitespace-nowrap">需給出 NT$ ${Math.abs(diff).toLocaleString()}</span></div>`;
                     } else {
-                        return `<div class="flex justify-between"><span>⚪ ${m}</span><span>剛好結清</span></div>`;
+                        return `<div class="flex justify-between"><span>⚪ ${esc(m)}</span><span>剛好結清</span></div>`;
                     }
-                }).join('') + renderTransfers(paidByMember, perPersonJpy, rate);
+                }).join('') + renderTransfers(S.transfers, S.rate);
 
             const listEl = document.getElementById('expense-list');
             listEl.innerHTML = expenses.map(e => `
                 <div class="pixel-box p-3 bg-white flex justify-between items-center gap-2">
-                    <div>
+                    <div class="min-w-0">
                         <div class="font-bold text-sm text-[#4A2E1B]">${esc(e.title)}</div>
-                        <div class="text-xs text-[#6E472B] mt-0.5">先墊：<b>${esc(members[e.payer] || '旅伴')}</b> ｜ 約 NT$ ${Math.round(e.amount * rate).toLocaleString()}</div>
+                        <div class="text-xs text-[#6E472B] mt-0.5">先墊：<b>${esc(members[e.payer] || '旅伴')}</b>${e.currency === 'TWD' ? '' : ` ｜ 約 NT$ ${r(e.amount * S.rate)}`}</div>
                     </div>
                     <div class="flex items-center gap-2.5">
-                        <span class="font-mono font-black text-base text-[#D63E2F]">¥${e.amount.toLocaleString()}</span>
+                        <span class="font-mono font-black text-base text-[#D63E2F] whitespace-nowrap">${fmtAmount(e)}</span>
                         <button onclick="deleteExpense(${e.id})" class="text-sm text-gray-400 hover:text-[#D63E2F] px-1.5 py-1">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -1505,56 +1532,87 @@
         }
 
         // 算出「誰該轉給誰多少」，用最少的轉帳次數結清
-        function computeTransfers(paidByMember, perPersonJpy) {
-            const bal = members.map((m, i) => ({ i, v: Math.round(paidByMember[i] - perPersonJpy) }));
+        function computeTransfers(paidByMember, perPerson) {
+            const bal = members.map((m, i) => ({ i, v: Math.round(paidByMember[i] - perPerson) }));
             const debtors = bal.filter(b => b.v < 0).map(b => ({ ...b, v: -b.v })).sort((a, b) => b.v - a.v);
             const creditors = bal.filter(b => b.v > 0).sort((a, b) => b.v - a.v);
             const out = [];
             let d = 0, c = 0;
             while (d < debtors.length && c < creditors.length) {
                 const amt = Math.min(debtors[d].v, creditors[c].v);
-                if (amt > 0) out.push({ from: debtors[d].i, to: creditors[c].i, jpy: amt });
+                if (amt > 0) out.push({ from: debtors[d].i, to: creditors[c].i, twd: amt });
                 debtors[d].v -= amt; creditors[c].v -= amt;
                 if (debtors[d].v <= 0) d++;
                 if (creditors[c].v <= 0) c++;
             }
             return out;
         }
-        function renderTransfers(paidByMember, perPersonJpy, rate) {
-            const list = computeTransfers(paidByMember, perPersonJpy);
+        function renderTransfers(list, rate) {
             if (!list.length) return '';
             return `<div class="mt-2 pt-2 border-t border-[#F5B041]/40">
                 <div class="text-[#F5B041] font-bold mb-1">💸 這樣轉帳就結清了（共 ${list.length} 筆）：</div>
                 ${list.map(t => `<div class="flex justify-between gap-2 bg-[#4A2E1B] rounded px-2 py-1 mb-1">
                     <span>${esc(members[t.from])} ➜ ${esc(members[t.to])}</span>
-                    <span class="font-mono font-bold text-[#F5B041] whitespace-nowrap">NT$ ${Math.round(t.jpy * rate).toLocaleString()}<span class="text-xs text-gray-300">（¥${t.jpy.toLocaleString()}）</span></span>
+                    <span class="font-mono font-bold text-[#F5B041] whitespace-nowrap">NT$ ${t.twd.toLocaleString()}<span class="text-xs text-gray-300">（約 ¥${Math.round(t.twd / rate).toLocaleString()}）</span></span>
                 </div>`).join('')}
             </div>`;
         }
 
-        function exportExpensesToLine() {
-            const rate = parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT;
-            const totalJpy = expenses.reduce((sum, e) => sum + e.amount, 0);
-            const perPersonTwd = Math.round((totalJpy / 4) * rate);
-
-            let text = `🐕【山陰 4 日自駕旅費結算單】\n`;
-            text += `總花費：¥${totalJpy.toLocaleString()} (匯率 ${rate})\n`;
-            text += `每人平均：約 NT$ ${perPersonTwd.toLocaleString()}\n\n`;
-            text += `📋 明細：\n`;
-            expenses.forEach(e => {
-                text += `• ${e.title}：¥${e.amount.toLocaleString()} (${members[e.payer]}墊)\n`;
+        // 匯出 Excel（.xlsx）：明細、每人結算、轉帳三個工作表。SheetJS 用到時才下載
+        function loadSheetJs() {
+            if (window.XLSX) return Promise.resolve(window.XLSX);
+            return new Promise((resolve, reject) => {
+                const sc = document.createElement('script');
+                sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+                sc.onload = () => window.XLSX ? resolve(window.XLSX) : reject(new Error('no XLSX'));
+                sc.onerror = () => reject(new Error('load failed'));
+                document.head.appendChild(sc);
             });
-            const paid = members.map(() => 0);
-            expenses.forEach(e => { if (paid[e.payer] !== undefined) paid[e.payer] += e.amount; });
-            const transfers = computeTransfers(paid, totalJpy / members.length);
-            if (transfers.length) {
-                text += `\n💸 轉帳結清：\n`;
-                transfers.forEach(t => {
-                    text += `• ${members[t.from]} ➜ ${members[t.to]}：NT$ ${Math.round(t.jpy * rate).toLocaleString()}\n`;
-                });
-            }
-
-            copyText(text, "LINE 分帳結算明細");
+        }
+        async function exportExpensesToExcel() {
+            let XLSX;
+            try { XLSX = await loadSheetJs(); }
+            catch (e) { showToast('⚠️ 第一次匯出需要網路，請連上網路再試'); return; }
+            const S = getSplitSummary();
+            const r = v => Math.round(v);
+            const detail = [['項目', '幣別', '金額', '換算台幣', '先墊的人']].concat(
+                expenses.map(e => [e.title, e.currency === 'TWD' ? '台幣' : '日幣', e.amount, r(expTwd(e, S.rate)), members[e.payer] || '旅伴']),
+                [[], ['合計', '', '', r(S.totalTwd), ''], ['匯率', '1 日圓 =', S.rate, '台幣', '']]
+            );
+            const settle = [['旅伴', '已墊（台幣）', '應分攤（台幣）', '差額（正數＝應收回）']].concat(
+                members.map((m, i) => [m, r(S.paid[i]), r(S.perPerson), r(S.paid[i] - S.perPerson)])
+            );
+            const trans = [['誰轉帳', '轉給誰', '台幣', '約日幣']].concat(
+                S.transfers.map(t => [members[t.from], members[t.to], t.twd, r(t.twd / S.rate)])
+            );
+            if (!S.transfers.length) trans.push(['已經結清，不用轉帳']);
+            const wb = XLSX.utils.book_new();
+            const add = (rows, name, widths) => {
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = widths.map(w => ({ wch: w }));
+                XLSX.utils.book_append_sheet(wb, ws, name);
+            };
+            add(detail, '明細', [44, 8, 12, 12, 12]);
+            add(settle, '每人結算', [12, 14, 14, 20]);
+            add(trans, '轉帳', [12, 12, 12, 12]);
+            const d = new Date();
+            const fname = `山陰旅費分帳_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.xlsx`;
+            const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            // 手機：用分享選單（可存到檔案、傳 LINE）；電腦：直接下載
+            try {
+                const file = new File([blob], fname, { type: blob.type });
+                if (navigator.canShare && navigator.canShare({ files: [file] }) && /Mobi|iPhone|iPad|Android/i.test(navigator.userAgent)) {
+                    await navigator.share({ files: [file], title: fname });
+                    return;
+                }
+            } catch (e) { if (e && e.name === 'AbortError') return; }
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fname;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+            showToast('📊 已匯出 Excel');
         }
 
         function saveChecklist() {

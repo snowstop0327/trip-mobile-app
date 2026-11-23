@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=7">
+    <link rel="stylesheet" href="css/app.css?v=8">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -311,7 +311,7 @@
                                 <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">入住</div><div class="font-mono font-black text-base text-[#2B5B84]">12/6 15:00〜</div><div class="text-xs text-[#6E472B]">最晚 24:00・登記抵達 19:00</div></div>
                                 <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">退房</div><div class="font-mono font-black text-base text-[#D63E2F]">12/7 10:00</div><div class="text-xs text-[#6E472B]">行程 09:09 出發</div></div>
                             </div>
-                            <div class="text-[#4A2E1B] font-medium leading-relaxed">🛏️ 分成 4 張單人預約（都是禁煙、含早餐）<br>　・房型隨機 × 3 間，各 ¥7,560<br>　・標準雙人床（150cm）× 1 間，¥7,830<br>💴 合計 <b class="text-[#D63E2F]">¥30,510</b><br><span class="inline-block bg-[#E07A2E] text-white px-2 py-0.5 rounded font-bold text-xs mt-1">💴 現場付款（4 間各自結帳）</span></div>
+                            <div class="text-[#4A2E1B] font-medium leading-relaxed">🛏️ 分成 4 張單人預約（都是禁煙、含早餐）<br>　・房型隨機 × 3 間，各 ¥7,560<br>　・標準雙人床（150cm）× 1 間，¥7,830<br>💴 合計 <b class="text-[#D63E2F]">¥30,510</b><br><span class="inline-block bg-[#E07A2E] text-white px-2 py-0.5 rounded font-bold text-xs mt-1">💴 現場付款</span></div>
                             <div class="text-xs text-[#6E472B] font-medium">⚠️ 取消費：當天取消、沒通知沒入住都收 100%</div>
                             <ul class="text-xs text-[#4A2E1B] font-medium space-y-1 bg-white rounded border border-[#4A2E1B] p-2">
                                 <li class="text-[#D63E2F] font-bold">🅿️ 停車 1 晚 ¥500（只收現金）、先到先停只有 30 個位子、高度限 2m；15:00〜隔天 10:00 <u>停進去就不能中途開出來</u>，晚餐走路去米子站前吃</li>
@@ -378,18 +378,19 @@
                     <div class="pixel-box bg-[#4A2E1B] text-white p-4 space-y-2.5">
                         <div class="flex justify-between items-center flex-wrap gap-2">
                             <span class="text-sm text-[#F5B041] pixel-font">📊 4人統計 (匯率 <input id="fx-rate-input" type="number" step="0.0001" inputmode="decimal" value="0.215" onchange="onFxRateManualChange()" class="w-20 bg-[#2C221E] text-[#F5B041] border border-[#F5B041] rounded px-1 text-center font-mono text-sm">)</span>
-                            <button onclick="exportExpensesToLine()" class="pixel-btn bg-[#388E3C] text-white text-xs px-2.5 py-1 font-bold pixel-font">
-                                📋 複製 LINE 結算表
+                            <button onclick="exportExpensesToExcel()" class="pixel-btn bg-[#388E3C] text-white text-xs px-2.5 py-1 font-bold pixel-font">
+                                📊 匯出 Excel
                             </button>
                         </div>
                         <div id="fx-rate-status" class="flex items-center justify-between gap-2 text-xs text-gray-300 -mt-1"></div>
                         <div class="grid grid-cols-2 gap-2.5 pt-1">
                             <div class="bg-[#2C221E] p-2.5 rounded border border-white/20">
-                                <div class="text-xs text-gray-300">日幣總計 (JPY)</div>
-                                <div id="total-jpy" class="text-xl font-mono font-bold text-[#F5B041]">¥0</div>
+                                <div class="text-xs text-gray-300">總花費 (換算台幣)</div>
+                                <div id="total-twd" class="text-xl font-mono font-bold text-[#F5B041]">NT$ 0</div>
+                                <div id="total-breakdown" class="text-xs text-gray-300 font-mono mt-0.5"></div>
                             </div>
                             <div class="bg-[#2C221E] p-2.5 rounded border border-white/20">
-                                <div class="text-xs text-gray-300">每人平均 (約 TWD)</div>
+                                <div class="text-xs text-gray-300">每人平均 (台幣)</div>
                                 <div id="per-person-twd" class="text-xl font-mono font-bold text-[#4CAF50]">NT$ 0</div>
                             </div>
                         </div>
@@ -412,7 +413,13 @@
                         <h4 class="font-bold text-sm pixel-font text-[#D63E2F]">➕ 新增一筆旅費 (自動存入手機)</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <input id="exp-title" type="text" placeholder="項目 (如: 羽根屋蕎麥麵)" class="border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-bold focus:outline-none">
-                            <input id="exp-amount" type="number" placeholder="日幣金額 (JPY)" class="border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-mono font-bold focus:outline-none">
+                            <div class="flex gap-2">
+                                <select id="exp-currency" class="border-2 border-[#4A2E1B] rounded px-2 py-2 text-sm bg-[#FFF8E7] font-bold">
+                                    <option value="JPY">¥ 日幣</option>
+                                    <option value="TWD">NT$ 台幣</option>
+                                </select>
+                                <input id="exp-amount" type="number" inputmode="decimal" placeholder="金額" class="flex-1 min-w-0 border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-mono font-bold focus:outline-none">
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2.5">
                             <select id="exp-payer" class="border-2 border-[#4A2E1B] rounded px-2.5 py-2 text-sm bg-[#FFF8E7] font-bold">
@@ -717,6 +724,6 @@
 
     </div>
 
-    <script src="js/app.js?v=7"></script>
+    <script src="js/app.js?v=8"></script>
 </body>
 </html>
