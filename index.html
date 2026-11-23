@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=6">
+    <link rel="stylesheet" href="css/app.css?v=7">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -251,35 +251,74 @@
                 <!-- 3 Nights Hotels Summary -->
                 <div class="pixel-box p-4 space-y-3">
                     <h3 class="font-bold text-base pixel-font flex items-center gap-2 text-[#4A2E1B]">
-                        <i class="fa-solid fa-bed text-[#D63E2F]"></i> 三晚住宿憑證與車機電話
+                        <i class="fa-solid fa-bed text-[#D63E2F]"></i> 三晚住宿：入住、金額、設備
                     </h3>
+                    <p class="text-xs text-[#6E472B] font-medium">🔒 這個網址是公開的，姓名、預約編號不放在網頁上。Check-in 出示護照＋報預約人姓名即可；預約編號可以填在下面欄位，只會存在你自己這支手機。</p>
                     <div class="space-y-2.5 text-sm">
                         <!-- Hotel 1 -->
-                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-2">
                             <div class="flex justify-between items-start gap-2">
-                                <span class="font-black text-base text-[#D63E2F]">Day 1 (12/4)：御宿 野乃 境港</span>
+                                <span class="font-black text-base text-[#D63E2F]">Day 1 (12/4 五)：御宿 野乃 境港</span>
                                 <button onclick="copyText('0859-44-5489', '御宿野乃境港 車機電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
                             </div>
                             <div class="text-[#6E472B] font-medium">📍 鳥取県境港市大正町216 ｜ ☎️ 0859-44-5489</div>
-                            <div class="text-xs text-[#388E3C] font-bold">🍜 全館榻榻米免穿鞋、21:30~23:00 免費夜鳴拉麵</div>
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">入住</div><div class="font-mono font-black text-base text-[#2B5B84]">12/4 15:00〜</div><div class="text-xs text-[#6E472B]">登記抵達 19:00</div></div>
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">退房</div><div class="font-mono font-black text-base text-[#D63E2F]">12/5 11:00</div><div class="text-xs text-[#6E472B]">行程 08:30 出發</div></div>
+                            </div>
+                            <div class="text-[#4A2E1B] font-medium leading-relaxed">🛏️ 和モダン 禁煙モデレートツイン × 2 間（4 人・含早餐）<br>💴 合計 ¥68,400 − 折價券 ¥500 − Dormy's 點數 700 ＝ <b class="text-[#D63E2F]">應付 ¥67,200</b>（每人約 ¥16,800）<br>💳 確認信沒寫是否已付款，Check-in 時確認是否要現場付</div>
+                            <ul class="text-xs text-[#4A2E1B] font-medium space-y-1 bg-white rounded border border-[#4A2E1B] p-2">
+                                <li>♨️ 天然溫泉「夕凪之湯」15:00〜隔天 10:00（整晚都能泡，三溫暖 1:00–5:00 暫停）</li>
+                                <li>🍜 免費「夜鳴拉麵」約 21:30〜23:00（有網站寫 22:00 開始，以館內公告為準）</li>
+                                <li>🍳 早餐自助約 70 道菜，6:30〜9:30（最後入場 9:00），境港海鮮丼必吃</li>
+                                <li>🅿️ 停車 1 晚 ¥500，15:00〜隔天 11:00；滿了會引導到站前合作停車場</li>
+                                <li>👣 全館榻榻米、房間外也能光腳走；有洗衣房</li>
+                            </ul>
+                            <input data-booking-key="nono" placeholder="📝 預約編號（只存在這支手機）" class="w-full bg-white border-2 border-[#4A2E1B] rounded px-2 py-1.5 text-sm font-mono">
                         </div>
                         <!-- Hotel 2 -->
-                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-2">
                             <div class="flex justify-between items-start gap-2">
-                                <span class="font-black text-base text-[#D63E2F]">Day 2 (12/5)：星野集團 界 出雲</span>
+                                <span class="font-black text-base text-[#D63E2F]">Day 2 (12/5 六)：星野集團 界 出雲</span>
                                 <button onclick="copyText('0853-54-5600', '界 出雲 車機電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
                             </div>
                             <div class="text-[#6E472B] font-medium">📍 島根県出雲市大社町日御碕604 ｜ ☎️ 0853-54-5600</div>
-                            <div class="text-xs text-[#388E3C] font-bold">🌅 15:37 抵達泡湯、看日本海夕陽、松葉蟹會席＋石見神樂</div>
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">入住</div><div class="font-mono font-black text-base text-[#2B5B84]">12/5 14:30〜</div><div class="text-xs text-[#6E472B]">行程約 14:30 到</div></div>
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">退房</div><div class="font-mono font-black text-base text-[#D63E2F]">12/6 〜11:00</div><div class="text-xs text-[#6E472B]">行程 10:00 出發</div></div>
+                            </div>
+                            <div class="text-[#4A2E1B] font-medium leading-relaxed">🛏️ 和室 TC3（2 人）¥101,500 ＋ 和室 TA3（2 人）¥94,900<br>　（都含早晚餐、入浴稅 ¥300）<br>💴 總計 <b class="text-[#D63E2F]">¥196,400</b>（每人約 ¥49,100）<br><span class="inline-block bg-[#388E3C] text-white px-2 py-0.5 rounded font-bold text-xs mt-1">✅ 已刷卡預付，現場不用再付房費</span><br><span class="text-xs text-[#6E472B]">現場只會收追加的酒水、加點費用</span></div>
+                            <div class="text-xs text-[#6E472B] font-medium">⚠️ 取消費：40〜8 天前 10%、7〜0 天前 30%（11/28 起）、沒通知沒入住 100%；改日期或取消另收 ¥1,000 手續費</div>
+                            <ul class="text-xs text-[#4A2E1B] font-medium space-y-1 bg-white rounded border border-[#4A2E1B] p-2">
+                                <li>🍱 晚餐 17:30 或 19:30 開始（Check-in 時選）；基本專案應是「福神會席」，冬季蟹會席要另外升級</li>
+                                <li>🍳 早餐官網有兩種寫法（7:00〜8:45 / 7:30〜9:30），Check-in 時跟櫃台確認時段</li>
+                                <li>♨️ 內湯＋露天風呂（面向出雲松島、有躺著泡的寢湯），泡完有島根特產湯上飲品</li>
+                                <li>🎭 石見神樂「國讓」免費、免預約，演出時間 Check-in 時問</li>
+                                <li>🅿️ 免費停車、免預約；🚫 沒有接駁車</li>
+                                <li>📶 全館免費 Wi-Fi；房內有作務衣（當睡衣穿）、足袋襪、加濕空氣清淨機</li>
+                                <li>🗼 日御碕燈塔公車站走路 1 分鐘，傍晚散步去燈塔看夕陽</li>
+                            </ul>
+                            <input data-booking-key="kai" placeholder="📝 預約編號（只存在這支手機）" class="w-full bg-white border-2 border-[#4A2E1B] rounded px-2 py-1.5 text-sm font-mono">
                         </div>
                         <!-- Hotel 3 -->
-                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-1.5">
+                        <div class="bg-[#FFF8E7] p-3 rounded border border-[#4A2E1B] space-y-2">
                             <div class="flex justify-between items-start gap-2">
-                                <span class="font-black text-base text-[#D63E2F]">Day 3 (12/6)：Super Hotel 米子駅前</span>
+                                <span class="font-black text-base text-[#D63E2F]">Day 3 (12/6 日)：Super Hotel 米子駅前</span>
                                 <button onclick="copyText('0859-32-9000', 'Super Hotel 米子駅前 電話')" class="pixel-btn bg-white text-[#2B5B84] px-2 py-0.5 text-xs font-bold whitespace-nowrap">複製電話</button>
                             </div>
                             <div class="text-[#6E472B] font-medium">📍 鳥取県米子市万能町112 ｜ ☎️ 0859-32-9000</div>
-                            <div class="text-xs text-[#388E3C] font-bold">♨️ 附天然溫泉「大山之湯」與免費健康早餐</div>
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">入住</div><div class="font-mono font-black text-base text-[#2B5B84]">12/6 15:00〜</div><div class="text-xs text-[#6E472B]">最晚 24:00・登記抵達 19:00</div></div>
+                                <div class="bg-white rounded border border-[#4A2E1B] p-1.5"><div class="text-xs text-[#6E472B] font-bold">退房</div><div class="font-mono font-black text-base text-[#D63E2F]">12/7 10:00</div><div class="text-xs text-[#6E472B]">行程 09:09 出發</div></div>
+                            </div>
+                            <div class="text-[#4A2E1B] font-medium leading-relaxed">🛏️ 分成 4 張單人預約（都是禁煙、含早餐）<br>　・房型隨機 × 3 間，各 ¥7,560<br>　・標準雙人床（150cm）× 1 間，¥7,830<br>💴 合計 <b class="text-[#D63E2F]">¥30,510</b><br><span class="inline-block bg-[#E07A2E] text-white px-2 py-0.5 rounded font-bold text-xs mt-1">💴 現場付款（4 間各自結帳）</span></div>
+                            <div class="text-xs text-[#6E472B] font-medium">⚠️ 取消費：當天取消、沒通知沒入住都收 100%</div>
+                            <ul class="text-xs text-[#4A2E1B] font-medium space-y-1 bg-white rounded border border-[#4A2E1B] p-2">
+                                <li class="text-[#D63E2F] font-bold">🅿️ 停車 1 晚 ¥500（只收現金）、先到先停只有 30 個位子、高度限 2m；15:00〜隔天 10:00 <u>停進去就不能中途開出來</u>，晚餐走路去米子站前吃</li>
+                                <li>♨️ 天然溫泉大浴場（男女輪替）</li>
+                                <li>🍳 免費健康早餐，6:30 開始</li>
+                            </ul>
+                            <input data-booking-key="super" placeholder="📝 預約編號（4 間，只存在這支手機）" class="w-full bg-white border-2 border-[#4A2E1B] rounded px-2 py-1.5 text-sm font-mono">
                         </div>
                     </div>
                 </div>
@@ -430,20 +469,21 @@
                     汪！我現在收納在右下角囉！隨時點我都可以叫出「日文急救卡」或新增行程汪！
                 </p>
 
-                <!-- Quick Action Shortcuts Inside Shiba Helper -->
+                <!-- Quick Action Shortcuts Inside Shiba Helper：開車時真的會用到的 -->
+                <div class="text-xs font-bold text-[#6E472B] mb-1" id="shiba-next-label">下一站</div>
                 <div class="grid grid-cols-2 gap-1.5 text-xs">
-                    <button onclick="openFlashcardModal('walkin4'); toggleShibaPopover(false);" class="pixel-btn bg-[#D63E2F] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
-                        🦀 4人沒訂位卡
+                    <button onclick="shibaNavNext()" class="pixel-btn bg-[#2B5B84] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        🧭 導航下一站
                     </button>
-                    <button onclick="openFlashcardModal('foldseat'); toggleShibaPopover(false);" class="pixel-btn bg-[#2B5B84] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
-                        🚐 收第3排椅卡
+                    <button onclick="shibaCopyNextTel()" class="pixel-btn bg-[#D63E2F] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        📞 複製電話給車機
                     </button>
-                    <button onclick="openAddStopModal(); toggleShibaPopover(false);" class="pixel-btn bg-[#388E3C] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
-                        ➕ 新增今日景點
-                    </button>
-                    <button onclick="openFlashcardModal('gas'); toggleShibaPopover(false);" class="pixel-btn bg-[#F5B041] text-[#4A2E1B] py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
-                        ⛽ 紅色油槍加滿
-                    </button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=%E3%82%AC%E3%82%BD%E3%83%AA%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89" target="_blank" rel="noopener" class="pixel-btn bg-[#F5B041] text-[#4A2E1B] py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        ⛽ 附近加油站
+                    </a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B" target="_blank" rel="noopener" class="pixel-btn bg-[#388E3C] text-white py-2 px-2 font-bold pixel-font flex items-center justify-center gap-1">
+                        🏪 附近便利商店
+                    </a>
                 </div>
             </div>
 
@@ -677,6 +717,6 @@
 
     </div>
 
-    <script src="js/app.js?v=6"></script>
+    <script src="js/app.js?v=7"></script>
 </body>
 </html>

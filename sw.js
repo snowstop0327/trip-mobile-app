@@ -4,20 +4,21 @@
  * - 天氣、匯率 API：直接走網路（App 本身已存在手機裡）
  * 改了檔案想強迫大家更新時，把 VERSION 加 1 即可。
  */
-const VERSION = 'v6';
+const VERSION = 'v7';
 const APP_CACHE = `sanin-app-${VERSION}`;
 const ASSET_CACHE = 'sanin-assets';
 const APP_SHELL = [
   './',
   './index.html',
-  './css/app.css?v=6',
-  './js/app.js?v=6',
+  './css/app.css?v=7',
+  './js/app.js?v=7',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
   './photos/conan.jpg',
+  './photos/miho-shrine.jpg',
   './photos/hinomisaki-lighthouse.jpg',
   './photos/hinomisaki-shrine.jpg',
   './photos/izumo-soba.jpg',

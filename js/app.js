@@ -8,7 +8,7 @@
             s1: 'taoyuan-city', s2: 'tpe-airport', s3: 'tpe-t1', s4: 'yonago-airport', s5: 'voxy',
             s6: 'mizuki-road', s7: 'mizuki-road', s8: 'matsue-castle', s9: 'mankusen', s10: 'izumo-soba',
             s11: 'izumo-taisha', s12: 'hinomisaki-lighthouse', s13: 'hinomisaki-shrine', s14: 'conan',
-            s15: 'pear-museum', s16: 'snow-crab', s17: 'yonago-station', s18: 'yonago-castle', s19: 'voxy',
+            s15: 'pear-museum', s16: 'snow-crab', s24: 'miho-shrine', s28: 'izumo-soba', s17: 'yonago-station', s18: 'yonago-castle', s19: 'voxy',
             s20: 'yonago-airport', s21: 'tpe-t1', s22: 'tpe-airport', s23: 'taoyuan-city'
         };
         const PHOTO_CREDITS = {
@@ -28,7 +28,8 @@
             'pear-museum': { title: '鳥取二十世紀梨記念館', file: 'Tottori_Nijisseiki_Pear_Museum01n4592.jpg' },
             'snow-crab': { title: 'ズワイガニ', file: 'Chionoecetes_opilio_Kanikkokan.jpg' },
             'yonago-station': { title: '米子駅', file: '米子駅駅舎.jpg' },
-            'yonago-castle': { title: '米子城', file: 'Yonago_Castle,_honmaru-1.jpg' }
+            'yonago-castle': { title: '米子城', file: 'Yonago_Castle,_honmaru-1.jpg' },
+            'miho-shrine': { title: '美保神社', file: 'Miho-jinja_haiden.jpg' }
         };
 
         const defaultItineraryData = {
@@ -118,88 +119,71 @@
             },
             2: {
                 date: "2026/12/5 (週六)",
-                title: "Day 2｜松江城 ➔ 萬九千神社 ➔ 羽根屋蕎麥麵 ➔ 出雲大社 ➔ 界 出雲",
-                departure: "08:00 出發",
-                shibaTip: "汪！今天是神在月重頭戲！松江城、羽根屋蕎麥麵、出雲大社跟星野『界 出雲』都有附上美照，點照片可以放大欣賞汪！",
+                title: "Day 2｜美保神社 ➔ 松江城 ➔ 羽根屋割子蕎麥麵 ➔ 界 出雲",
+                departure: "08:30 出發",
+                shibaTip: "汪！今天先去美保神社拿御朱印，再登松江城，中午吃羽根屋的三段割子蕎麥麵！下午早點到『界 出雲』泡湯看日本海夕陽汪！",
                 stops: [
                     {
                         id: "s7",
-                        time: "08:00",
-                        stay: "準備退房 (停留 30 分)",
+                        time: "08:30",
+                        stay: "早餐 & 退房",
                         name: "天然溫泉 境港 夕凪之湯 御宿 野乃",
                         address: "〒684-0004 Tottori, Sakaiminato, Taishomachi, 216 番地",
-                        driveNext: "🚗 約 38 分 (經江島大橋/中海)",
+                        driveNext: "🚗 約 25 分 (經境水道大橋)",
                         tag: "08:30 出發",
-                        note: "享用野乃豐盛海鮮早餐後退房，08:30 準時出發前往松江城！",
+                        note: "慢慢吃完早餐後退房，行李直接上車。第一站是美保關的美保神社。",
                         mapQuery: "天然温泉 境港 夕凪の湯 御宿 野乃"
                     },
                     {
+                        id: "s24",
+                        time: "08:55",
+                        stay: "停留 50 分",
+                        name: "美保神社 (Miho Shrine・えびす總本宮)",
+                        address: "608 Mihonosekicho Mihonoseki, Matsue, Shimane 690-1501 日本",
+                        tel: "0852-73-0506",
+                        driveNext: "🚗 約 50 分",
+                        tag: "御朱印",
+                        note: "全國 3,385 間惠比壽神社的總本宮！跟出雲大社（大國主＝大黑天）合稱『惠比壽・大黑 兩參り』，兩邊都拜最圓滿。參拜『二禮、二拍手、一禮』。拜完走到神社旁的『青石疊通り』老街拍照。⚠️ 御朱印受理時間查不到官方資料，大約 8:30 起。",
+                        mapQuery: "美保神社",
+                        jpCardKey: "goshuin",
+                        checkTask: "美保神社御朱印＋逛青石疊通り"
+                    },
+                    {
                         id: "s8",
-                        time: "09:08",
+                        time: "10:35",
                         stay: "停留 1 小時 30 分",
                         name: "松江城 (Matsue Castle 国宝天守)",
                         address: "1-5 Tonomachi, Matsue, Shimane 690-0887 日本",
                         tel: "0852-21-4030",
-                        driveNext: "🚗 約 40 分",
+                        driveNext: "🚗 約 45 分",
                         tag: "國寶天守",
-                        img: defaultStopPhotos.s8,
                         note: "日本僅存 12 座現存天守之一！登頂 360 度俯瞰宍道湖。⚠️ 進天守閣需脫鞋，12 月木地板很冰，記得穿厚襪子！",
                         mapQuery: "松江城",
                         checkTask: "穿厚襪子登松江城天守閣"
                     },
                     {
-                        id: "s9",
-                        time: "11:18",
-                        stay: "停留 30 分",
-                        name: "萬九千神社 (Mankusen Shrine)",
-                        address: "258 Hikawa-cho, Izumo, Shimane 699-0615 日本",
-                        tel: "0853-72-9444",
-                        driveNext: "🚗 約 8 分",
-                        tag: "神在月送神",
-                        img: defaultStopPhotos.s9,
-                        note: "八百萬神明在出雲最後聚會與道別的神社！參拜禮儀同出雲大社為『二禮、四拍手、一禮』，可領御朱印與抽神在みくじ。",
-                        mapQuery: "万九千神社",
-                        checkTask: "萬九千神社御朱印＋神在みくじ"
-                    },
-                    {
                         id: "s10",
-                        time: "11:56",
-                        stay: "停留 1 小時",
+                        time: "12:50",
+                        stay: "停留 1 小時 10 分",
                         name: "天皇蕎麥麵 羽根屋 本店 (獻上蕎麥)",
                         address: "〒693-0001 Shimane, Izumo, Imaichicho, 本町549",
                         tel: "0853-21-0058",
-                        driveNext: "🚗 約 21 分",
+                        driveNext: "🚗 約 30 分",
                         tag: "Day2 午餐",
-                        img: defaultStopPhotos.s10,
-                        note: "皇室獻上出雲蕎麥麵名店！無預約制，抵達後先到門口登記簿寫名字（4名），必點『三段割子そば（三層蕎麥麵）』。",
+                        note: "皇室獻上出雲蕎麥麵名店！11:00–15:00、無休、賣完就收。到了先到門口登記簿寫名字（4名），必點『三段割子そば（三層蕎麥麵）』。週六中午可能要排隊，排太久就往界出雲方向開，在出雲大社門前的荒木屋、田中屋吃。",
                         mapQuery: "献上そば 羽根屋 本店",
                         jpCardKey: "soba",
                         hasFoodRescue: true
                     },
                     {
-                        id: "s11",
-                        time: "13:17",
-                        stay: "停留 2 小時",
-                        name: "出雲大社 (Izumo Taisha)",
-                        address: "195 Taishacho Kizukihigashi, Izumo, Shimane 699-0701 日本",
-                        tel: "0853-53-3100",
-                        driveNext: "🚗 約 20 分",
-                        tag: "神在月大社",
-                        img: defaultStopPhotos.s11,
-                        note: "💡 出雲大社參拜（二禮四拍手一禮）➔ 北島國造館領『龍蛇神』御朱印 ➔ 繞到本殿後方素鵞社參拜！",
-                        mapQuery: "出雲大社",
-                        checkTask: "出雲大社參拜 ➔ 領御朱印"
-                    },
-                    {
                         id: "s12",
-                        time: "15:37",
+                        time: "14:30",
                         stay: "入住享受溫泉與晚宴",
                         name: "星野集團 界 出雲 (Hoshino Resorts KAI Izumo)",
                         address: "604 Taishacho Hinomisaki, Izumo, Shimane 699-0763",
                         tel: "0853-54-5600",
                         tag: "頂級溫泉宿",
-                        img: defaultStopPhotos.s12,
-                        note: "位於日御碕燈塔與海岬旁！提早入住泡湯、17:00 欣賞日本海落日、晚上享用冬季限定松葉蟹會席料理與觀賞『石見神樂』演出！",
+                        note: "14:30 起可入住（房費已刷卡預付），先泡湯，16:30 散步到日御碕燈塔與日御碕神社，16:55 左右看日本海落日！晚上吃會席料理、看『石見神樂』演出。💡 我們訂的是基本專案，晚餐應該是『福神會席』；想吃冬季蟹會席要另外升級，Check-in 時可以問。",
                         mapQuery: "星野リゾート 界 出雲",
                         jpCardKey: "hotel_checkin"
                     }
@@ -207,77 +191,72 @@
             },
             3: {
                 date: "2026/12/6 (週日)",
-                title: "Day 3｜界出雲日出 ➔ 柯南米花商店街 ➔ 二十世紀梨館 ➔ 米子海王/Super Hotel",
+                title: "Day 3｜界出雲退房 ➔ 出雲大社＋門前午餐 ➔ mont-bell 大山店 ➔ 米子",
                 departure: "10:00 出發",
-                shibaTip: "汪！今天去柯南小鎮、二十世紀梨紀念館與米子吃松葉蟹！大家拍了好看的合照也能直接點『📷 換照片』放進自己的行程表留念汪！",
+                shibaTip: "汪！早上在界出雲慢慢吃早餐、泡晨湯，10:00 退房去出雲大社，在門前吃完午餐就開上大山逛 mont-bell，天黑前下山回米子汪！",
                 stops: [
                     {
                         id: "s13",
                         time: "10:00",
-                        stay: "晨間看日出 & 10:00 退房出發",
+                        stay: "早餐 & 晨湯 & 退房",
                         name: "Hoshino Resorts, Kai Izumo (界 出雲)",
                         address: "604 Taishacho Hinomisaki, Izumo, Shimane 699-0763",
-                        driveNext: "🚗 約 2 小時 1 分 (山陰自動車道)",
+                        driveNext: "🚗 約 15 分",
                         tag: "10:00 退房",
-                        note: "07:00 可在館內露台看日出、散步去日御碕燈塔與日御碕神社，10:00 退房出發前往鳥取縣北榮町（柯南小鎮）！",
+                        note: "早上可以泡露天風呂看海、散步去日御碕燈塔，10:00 退房出發去出雲大社。",
                         mapQuery: "星野リゾート 界 出雲"
                     },
                     {
-                        id: "s14",
-                        time: "12:01",
+                        id: "s11",
+                        time: "10:15",
+                        stay: "停留 1 小時 45 分",
+                        name: "出雲大社 (Izumo Taisha)",
+                        address: "195 Taishacho Kizukihigashi, Izumo, Shimane 699-0701 日本",
+                        tel: "0853-53-3100",
+                        driveNext: "🚶 走路約 5 分 (神門通り)",
+                        tag: "出雲國一宮",
+                        note: "💡 參拜『二禮、四拍手、一禮』➔ 御守所領出雲大社御朱印 ➔ 繞到本殿後方素鵞社 ➔ 北島國造館領『龍蛇神』御朱印。週日中午人會變多，停車場滿了就停神門通り周邊的收費停車場。",
+                        mapQuery: "出雲大社",
+                        jpCardKey: "goshuin",
+                        checkTask: "出雲大社參拜 ➔ 領御朱印"
+                    },
+                    {
+                        id: "s28",
+                        time: "12:00",
                         stay: "停留 1 小時",
-                        name: "柯南之家 米花商店街 (Beika Shopping Street)",
-                        address: "Yurashuku, Hokuei, Tōhaku District, Tottori 689-2221 日本",
-                        tel: "0858-37-1188",
-                        driveNext: "🚗 約 20 分",
-                        tag: "柯南午餐",
-                        img: defaultStopPhotos.s14,
-                        note: "內有『喫茶ポアロ（白羅咖啡廳）』拿坡里義大利麵、『Conan's Kitchen』咖哩漢堡、柯南義式冰淇淋與周邊商店。旁邊走路 5 分鐘即為青山剛昌故鄉館！",
-                        mapQuery: "コナンの家 米花商店街",
-                        jpCardKey: "walkin4",
+                        name: "出雲大社門前午餐（神門通り）",
+                        address: "Taishacho Kizukiminami, Izumo, Shimane 日本",
+                        driveNext: "🚗 約 1 小時 40 分 (山陰道 ➔ 米子IC ➔ 大山)",
+                        tag: "Day3 午餐",
+                        note: "車停著不用動，走路吃完再出發。想再吃一次割子蕎麥麵可以選『荒木屋』（江戶時代老店）或『田中屋』；不想再吃蕎麥麵，神門通り上也有其他小吃（美食分頁有列）。",
+                        mapQuery: "神門通り 出雲大社",
                         hasFoodRescue: true
                     },
                     {
-                        id: "s15",
-                        time: "13:21",
+                        id: "s27",
+                        time: "14:40",
                         stay: "停留 1 小時",
-                        name: "鳥取二十世紀梨紀念館 なしっこ館",
-                        address: "198-4 Dakyojicho, Kurayoshi, Tottori 682-0816",
-                        tel: "0858-23-1174",
-                        driveNext: "🚗 約 1 小時 3 分",
-                        tag: "水梨試吃",
-                        img: defaultStopPhotos.s15,
-                        note: "門票 ¥300/人！館內有巨型二十世紀梨樹標本、免費試吃三種當季鳥取水梨切盤，必吃香甜清爽的『梨子霜淇淋』！",
-                        mapQuery: "鳥取二十世紀梨記念館 なしっこ館",
-                        checkTask: "試吃三種水梨＋吃二十世紀梨霜淇淋"
-                    },
-                    {
-                        id: "s16",
-                        time: "15:24",
-                        stay: "停留 1 小時 (⚠️ 營業時間提醒)",
-                        name: "海王 (山陰日本海料理・松葉蟹專門店)",
-                        address: "4 Chome-94 Kakubancho, Yonago, Tottori 683-0812 日本",
-                        tel: "0859-31-6777",
-                        driveNext: "🚗 約 7 分",
-                        tag: "米子美食",
-                        img: defaultStopPhotos.s16,
-                        note: "💡 柴柴貼心提醒：『海王』14:00~17:00 為下午休息時間！若 15:24 抵達建議先去 Super Hotel 放行李或逛 AEON Mall 日吉津，17:00 晚市開門再來吃螃蟹或改吃米子燒肉（大力家族亭）！",
-                        mapQuery: "山陰日本海料理 海王 米子",
-                        jpCardKey: "crab_meat",
-                        hasFoodRescue: true
+                        name: "mont-bell 大山店 (モンベル 大山店)",
+                        address: "Daisen, Daisen-cho, Saihaku District, Tottori 689-3318 日本",
+                        tel: "0859-52-2511",
+                        driveNext: "🚗 約 40 分 (下山)",
+                        tag: "必逛",
+                        note: "在大山寺橋旁的 mont-bell 直營店（10:00–18:00、無休，冬季營業時間出發前再確認），旁邊是 mont-bell 經營的『大山參道市場』，可以吃大山牛奶霜淇淋、買在地伴手禮。⚠️ 12 月 17:00 就天黑、山路可能結冰，16:15 前下山最安全。",
+                        mapQuery: "モンベル 大山店",
+                        checkTask: "逛 mont-bell 大山店"
                     },
                     {
                         id: "s17",
-                        time: "16:31",
-                        stay: "入住 & 米子市區採買晚餐",
+                        time: "16:20",
+                        stay: "入住休息 & 米子站前晚餐",
                         name: "Super-Hotel Yonago ekimae (米子駅前)",
                         address: "112 Mannocho, Yonago, Tottori 683-0065 日本",
                         tel: "0859-32-9000",
                         tag: "Day3 住宿",
-                        img: defaultStopPhotos.s17,
-                        note: "辦理入住後，晚上可去『イオンモール日吉津 (AEON Mall)』採買藥妝伴手禮（營業至21:00），晚餐吃海王螃蟹或鳥取和牛燒肉！",
+                        note: "⚠️ 現場付款（4 間共 ¥30,510）。停車場 1 晚 ¥500 只收現金、先到先停 30 台，停進去到隔天 10:00 都不能開出來。放好行李後走路去米子站前吃晚餐（美食分頁有推薦），吃完可以逛 AEON 米子駅前店、松本清補貨。",
                         mapQuery: "スーパーホテル米子駅前",
-                        jpCardKey: "hotel_checkin"
+                        jpCardKey: "hotel_checkin",
+                        hasFoodRescue: true
                     }
                 ]
             },
@@ -371,6 +350,22 @@
                 ['name','note','checkTask'].forEach(k => { if (st[k] && fix[st[k]] !== undefined) { st[k] = fix[st[k]]; changed = true; } });
             }));
             if (changed) localStorage.setItem('sanin_custom_itinerary_v3', JSON.stringify(itineraryData));
+        })();
+
+        // 一次性：2026-11-23 行程改版（Day 2 加美保神社、羽根屋移到 Day 2、出雲大社移到 Day 3；拿掉萬九千神社、柯南小鎮、梨紀念館，Day 3 改去大山）
+        // 手機上已存的 Day 2、Day 3 換成新版，但保留使用者自己換過的照片
+        (function migratePlan20261123(){
+            const KEY = 'sanin_plan_rev';
+            if ((parseInt(localStorage.getItem(KEY)) || 0) >= 2) return;
+            const customImg = {};
+            Object.values(itineraryData || {}).forEach(d => (d?.stops || []).forEach(st => { if (st.img) customImg[st.id] = st.img; }));
+            [2, 3].forEach(day => {
+                const fresh = JSON.parse(JSON.stringify(defaultItineraryData[day]));
+                fresh.stops.forEach(st => { if (customImg[st.id]) st.img = customImg[st.id]; });
+                itineraryData[day] = fresh;
+            });
+            localStorage.setItem('sanin_custom_itinerary_v3', JSON.stringify(itineraryData));
+            localStorage.setItem(KEY, '2');
         })();
 
         // 清掉舊版存在手機裡的 Unsplash 圖庫照（不是真的景點），讓它改用維基百科真實照片
@@ -560,7 +555,7 @@
             "汪！現在每一站都可以點『✏️ 編輯』修改時間、地點或備註喔！",
             "汪！想把兩個景點對調？直接點卡片上的『⬆️ ⬇️』就能上下移動順序汪！",
             "汪！餐廳沒預約免緊張，點上方『4人入座卡』就能直接給店員看汪！",
-            "汪！出雲大社和萬九千神社參拜是『二禮、四拍手、一禮』，要拍四下喔！",
+            "汪！出雲大社參拜是『二禮、四拍手、一禮』要拍四下；美保神社是一般的『二禮、二拍手、一禮』喔！",
             "汪！取車時記得請 TOYOTA 店員把 VOXY 第三排椅子收起來，4 個大行李箱才好放汪！",
             "汪！覺得字還不夠大？點右上角可以切換『特大字級』汪！"
         ];
@@ -574,7 +569,7 @@
         // Load or initialize expenses
         let expenses = JSON.parse(localStorage.getItem('sanin_expenses_v2')) || [
             { id: 1, title: "🚐 TOYOTA VOXY Hybrid 租車(含雪胎全險)", amount: 67606, payer: 0 },
-            { id: 2, title: "🍐 二十世紀梨紀念館門票 (4人預估)", amount: 1200, payer: 0 },
+            { id: 2, title: "🍜 羽根屋 割子蕎麥麵 (4人預估)", amount: 4000, payer: 0 },
             { id: 3, title: "🏯 松江城登閣門票 (4人預估)", amount: 2720, payer: 1 }
         ];
 
@@ -582,7 +577,7 @@
         const defaultChecklist = [
             { id: "c1", text: "🪪 台灣駕照正本 ＋ 日文譯本 (絕對必帶！)", done: false },
             { id: "c2", text: "📕 護照 (效期6個月以上) & Visit Japan Web QR", done: false },
-            { id: "c4", text: "📖 御朱印帳 (出雲大社龍蛇神、萬九千神社)", done: false },
+            { id: "c4", text: "📖 御朱印帳 (美保神社、出雲大社龍蛇神)", done: false },
             { id: "c5", text: "🧦 厚襪子 (12月進松江城天守閣脫鞋防冰腳)", done: false },
             { id: "c6", text: "🧥 防風保暖大衣 & 暖暖包 (日御碕海邊看夕陽風大)", done: false },
             { id: "c7", text: "🪙 日幣零錢 5円 / 100円 (神社參拜與投幣用)", done: false },
@@ -590,6 +585,11 @@
             { id: "c9", text: "📶 日本網卡 / eSIM 已開通", done: false }
         ];
         let checklist = JSON.parse(localStorage.getItem('sanin_checklist_v2')) || defaultChecklist;
+        // 一次性：御朱印帳項目跟著行程改版換字
+        if (Array.isArray(checklist)) {
+            const c4 = checklist.find(c => c.id === 'c4' && /萬九千/.test(c.text));
+            if (c4) { c4.text = '📖 御朱印帳 (美保神社、出雲大社龍蛇神)'; localStorage.setItem('sanin_checklist_v2', JSON.stringify(checklist)); }
+        }
         // 一次性：移除舊的「裝沙用夾鏈袋」項目
         if (Array.isArray(checklist) && checklist.some(c => c.id === 'c3' && /裝沙/.test(c.text))) {
             checklist = checklist.filter(c => !(c.id === 'c3' && /裝沙/.test(c.text)));
@@ -668,27 +668,44 @@
             else el.innerText = '🎉 山陰之旅已圓滿結束';
         }
 
-        // ---- 天氣（Open-Meteo 免費預報，出發前 16 天內才有資料）----
+        // ---- 天氣（日本氣象廳 JMA 預報：3 天內用短期預報、7 天內用週間預報）----
+        // 資料來源：https://www.jma.go.jp/bosai/forecast/data/forecast/{府縣代碼}.json（官方開放、允許網頁直接讀取）
+        // office：府縣（310000 鳥取、320000 島根）；area：短期預報區域；temp：短期預報的氣溫觀測點
         const DAY_WEATHER_SPOT = {
-            1: { name: '境港', lat: 35.54, lon: 133.23 },
-            2: { name: '出雲', lat: 35.40, lon: 132.69 },
-            3: { name: '米子', lat: 35.43, lon: 133.33 },
-            4: { name: '米子', lat: 35.43, lon: 133.33 }
+            1: { name: '境港', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
+            2: { name: '松江', office: '320000', area: '320010', temp: '68132', sunset: '16:57' },
+            3: { name: '米子', office: '310000', area: '310020', temp: '69076', sunset: '16:54' },
+            4: { name: '米子', office: '310000', area: '310020', temp: '69076', sunset: '16:54' }
         };
         let weatherCache = {};
-        try { weatherCache = JSON.parse(localStorage.getItem('sanin_weather_v1')) || {}; } catch (e) {}
+        try { weatherCache = JSON.parse(localStorage.getItem('sanin_weather_jma_v1')) || {}; } catch (e) {}
+        try { localStorage.removeItem('sanin_weather_v1'); } catch (e) {} // 舊的 Open-Meteo 快取
+
+        // 氣象廳天氣代碼 → 圖示＋中文（常見代碼；其他依百位數判斷）
+        const JMA_CODE_ZH = {
+            100: '晴', 101: '晴時多雲', 102: '晴短暫雨', 103: '晴時有雨', 104: '晴短暫雪', 105: '晴時有雪',
+            110: '晴轉時多雲', 111: '晴轉陰', 112: '晴轉短暫雨', 113: '晴轉時有雨', 114: '晴轉雨', 115: '晴轉短暫雪', 116: '晴轉時有雪', 117: '晴轉雪',
+            200: '陰', 201: '陰時晴', 202: '陰短暫雨', 203: '陰時有雨', 204: '陰短暫雪', 205: '陰時有雪', 206: '陰短暫雨或雪', 207: '陰時有雨或雪',
+            209: '有霧', 210: '陰轉時晴', 211: '陰轉晴', 212: '陰轉短暫雨', 213: '陰轉時有雨', 214: '陰轉雨', 215: '陰轉短暫雪', 216: '陰轉時有雪', 217: '陰轉雪', 218: '陰轉雨或雪',
+            300: '雨', 301: '雨時晴', 302: '雨時停', 303: '雨時有雪', 306: '大雨', 308: '暴風雨', 309: '雨短暫雪', 311: '雨轉晴', 313: '雨轉陰', 314: '雨轉時有雪', 315: '雨轉雪',
+            400: '雪', 401: '雪時晴', 402: '雪時停', 403: '雪時有雨', 405: '大雪', 406: '暴風雪', 407: '暴風雪', 409: '雪短暫雨', 411: '雪轉晴', 413: '雪轉陰', 414: '雪轉雨'
+        };
         function weatherIcon(code) {
-            if (code === 0) return ['☀️', '晴'];
-            if (code <= 2) return ['🌤️', '晴時多雲'];
-            if (code === 3) return ['☁️', '陰'];
-            if (code <= 48) return ['🌫️', '有霧'];
-            if (code <= 57) return ['🌦️', '毛毛雨'];
-            if (code <= 67) return ['🌧️', '下雨'];
-            if (code <= 77) return ['❄️', '下雪'];
-            if (code <= 82) return ['🌧️', '陣雨'];
-            if (code <= 86) return ['🌨️', '陣雪'];
-            return ['⛈️', '雷雨'];
+            const c = parseInt(code, 10);
+            const zh = JMA_CODE_ZH[c];
+            const head = Math.floor(c / 100);
+            let icon = head === 1 ? '☀️' : head === 2 ? '☁️' : head === 3 ? '🌧️' : head === 4 ? '❄️' : '⛅';
+            if (zh) {
+                if (head === 1 && /雨/.test(zh)) icon = '🌦️';
+                else if (head === 1 && /雪/.test(zh)) icon = '🌨️';
+                else if (head === 1 && /陰|雲/.test(zh)) icon = '🌤️';
+                else if (head === 2 && /雪/.test(zh)) icon = '🌨️';
+                else if (head === 2 && /雨/.test(zh)) icon = '🌧️';
+                else if (head === 2 && /晴/.test(zh)) icon = '⛅';
+            }
+            return [icon, zh || ['', '晴', '陰', '雨', '雪'][head] || '—'];
         }
+
         async function loadWeather(day) {
             const spot = DAY_WEATHER_SPOT[day];
             const date = TRIP_DATES[day];
@@ -696,44 +713,84 @@
             const cached = weatherCache[key];
             if (cached && Date.now() - cached.at < 3 * 3600 * 1000) return false;
             const daysAhead = Math.round((new Date(date + 'T00:00:00') - new Date(todayStr() + 'T00:00:00')) / 86400000);
-            if (daysAhead > 15 || daysAhead < 0) {
+            if (daysAhead < 0) return false;
+            if (daysAhead > 7) {
                 weatherCache[key] = { at: Date.now(), na: true, daysAhead };
                 return true;
             }
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${spot.lat}&longitude=${spot.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
-                const res = await fetch(url);
+                const res = await fetch(`https://www.jma.go.jp/bosai/forecast/data/forecast/${spot.office}.json`);
                 if (!res.ok) throw new Error(res.status);
-                const d = (await res.json()).daily;
-                weatherCache[key] = {
-                    at: Date.now(),
-                    code: d.weather_code[0],
-                    max: Math.round(d.temperature_2m_max[0]),
-                    min: Math.round(d.temperature_2m_min[0]),
-                    rain: d.precipitation_probability_max[0],
-                    sunset: (d.sunset[0] || '').slice(11, 16)
-                };
+                const [short, week] = await res.json();
+                const sameDay = t => (t || '').slice(0, 10) === date;
+                let code = null, rain = null, min = null, max = null, reliability = '', source = '', tempFrom = '';
+
+                // 1) 短期預報（今天～後天）：天氣、6 小時降雨機率、當地氣溫
+                const sw = short.timeSeries[0];
+                const si = sw.timeDefines.findIndex(sameDay);
+                if (si >= 0) {
+                    const ar = sw.areas.find(a => a.area.code === spot.area) || sw.areas[0];
+                    code = ar.weatherCodes[si];
+                    source = '短期預報';
+                    const sp = short.timeSeries[1];
+                    const pa = sp.areas.find(a => a.area.code === spot.area) || sp.areas[0];
+                    const pops = sp.timeDefines.map((t, i) => sameDay(t) ? parseInt(pa.pops[i], 10) : NaN).filter(n => !isNaN(n));
+                    if (pops.length) rain = Math.max(...pops);
+                    const st = short.timeSeries[2];
+                    const ta = st.areas.find(a => a.area.code === spot.temp) || st.areas[0];
+                    st.timeDefines.forEach((t, i) => {
+                        if (!sameDay(t)) return;
+                        const v = parseInt(ta.temps[i], 10);
+                        if (isNaN(v)) return;
+                        if (t.slice(11, 13) === '09' || daysAhead === 0) max = max === null ? v : Math.max(max, v);
+                        else min = v;
+                    });
+                }
+                // 2) 週間預報（明天起 7 天）：補上沒有的欄位
+                const ww = week.timeSeries[0];
+                const wi = ww.timeDefines.findIndex(sameDay);
+                if (wi >= 0) {
+                    const wa = ww.areas[0];
+                    if (code === null) { code = wa.weatherCodes[wi]; source = '週間預報'; }
+                    if (rain === null && wa.pops[wi] !== '') rain = parseInt(wa.pops[wi], 10);
+                    reliability = (wa.reliabilities || [])[wi] || '';
+                    const wt = week.timeSeries[1].areas[0];
+                    const wmin = parseInt(wt.tempsMin[wi], 10), wmax = parseInt(wt.tempsMax[wi], 10);
+                    if ((min === null && !isNaN(wmin)) || (max === null && !isNaN(wmax))) tempFrom = wt.area.name;
+                    if (min === null && !isNaN(wmin)) min = wmin;
+                    if (max === null && !isNaN(wmax)) max = wmax;
+                }
+                if (code === null) {
+                    weatherCache[key] = { at: Date.now(), na: true, daysAhead };
+                } else {
+                    weatherCache[key] = { at: Date.now(), code, min, max, rain, reliability, source, tempFrom };
+                }
             } catch (e) {
                 return false;
             }
-            try { localStorage.setItem('sanin_weather_v1', JSON.stringify(weatherCache)); } catch (e) {}
+            try { localStorage.setItem('sanin_weather_jma_v1', JSON.stringify(weatherCache)); } catch (e) {}
             return true;
         }
         function renderWeatherChip(day) {
             const spot = DAY_WEATHER_SPOT[day];
             const w = weatherCache[`${day}_${TRIP_DATES[day]}`];
+            const sunset = `<span>🌇 日落 ${spot.sunset}</span>`;
             if (!w) return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold">⛅ ${spot.name}天氣讀取中…</div>`;
             if (w.na) {
-                const wait = Math.max(0, (w.daysAhead ?? 16) - 15);
-                return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold">⛅ ${spot.name}天氣預報：再 ${wait} 天後開放（出發前 16 天內自動顯示）・12 月平均約 4~11°C</div>`;
+                const wait = Math.max(1, (w.daysAhead ?? 8) - 7);
+                return `<div class="mt-2 text-xs bg-white/15 rounded px-2 py-1.5 font-bold flex flex-wrap gap-x-3 gap-y-0.5 items-center"><span>⛅ ${spot.name}：氣象廳週間預報再 ${wait} 天後開放（出發前 7 天內自動顯示）・12 月平均約 4~11°C</span>${sunset}</div>`;
             }
             const [icon, label] = weatherIcon(w.code);
-            const cold = w.min <= 2 ? '<span class="text-[#F5B041]">・⚠️ 低溫注意路面結冰</span>' : '';
+            const has = v => v !== null && v !== undefined;
+            const temp = has(w.min) && has(w.max) ? `${w.min}~${w.max}°C` : has(w.max) ? `最高 ${w.max}°C` : has(w.min) ? `最低 ${w.min}°C` : '';
+            const rel = { A: '可信度高', B: '可信度中', C: '可信度低' }[w.reliability] || '';
+            const cold = (w.min !== null && w.min <= 2) ? '<span class="text-[#F5B041]">・⚠️ 低溫注意路面結冰</span>' : '';
             return `<div class="mt-2 text-sm bg-white/15 rounded px-2 py-1.5 font-bold flex flex-wrap gap-x-3 gap-y-0.5 items-center">
                 <span>${icon} ${spot.name} ${label}</span>
-                <span class="font-mono">${w.min}~${w.max}°C</span>
+                ${temp ? `<span class="font-mono">${temp}</span>` : ''}
                 <span>☔ ${w.rain ?? '-'}%</span>
-                ${w.sunset ? `<span>🌇 日落 ${w.sunset}</span>` : ''}${cold}
+                ${sunset}${cold}
+                <span class="w-full text-xs opacity-80 font-medium">資料：日本氣象廳 ${w.source}${rel ? '・' + rel : ''}${w.tempFrom && w.tempFrom !== spot.name ? `・氣溫為${w.tempFrom}市預報` : ''}</span>
             </div>`;
         }
 
@@ -927,7 +984,7 @@
                 if (showPhotos) ensureWikiPhotos(day);
                 loadWeather(day).then(changed => {
                     if (changed && currentDay === day) {
-                        try { localStorage.setItem('sanin_weather_v1', JSON.stringify(weatherCache)); } catch (e) {}
+                        try { localStorage.setItem('sanin_weather_jma_v1', JSON.stringify(weatherCache)); } catch (e) {}
                         selectDay(day, { skipFetch: true, keepScroll: true });
                     }
                 });
@@ -1570,6 +1627,20 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // 預約編號：只存在這支手機（網站是公開的，不寫進程式碼）
+        (function initBookingNumbers(){
+            let saved = {};
+            try { saved = JSON.parse(localStorage.getItem('sanin_booking_no_v1')) || {}; } catch (e) {}
+            document.querySelectorAll('[data-booking-key]').forEach(el => {
+                const k = el.dataset.bookingKey;
+                if (saved[k]) el.value = saved[k];
+                el.addEventListener('input', () => {
+                    saved[k] = el.value.trim();
+                    try { localStorage.setItem('sanin_booking_no_v1', JSON.stringify(saved)); } catch (e) {}
+                });
+            });
+        })();
+
         // ==================== 美食・購物・備案景點 ====================
         // 營業時間查自 じゃらん、食べログ、NAVITIME 等（2026/11 查詢），出發前最好再確認一次
         const GUIDE_DATA = {
@@ -1583,33 +1654,32 @@
                     ]
                 },
                 {
-                    head: 'Day 2 午餐｜出雲（萬九千神社 → 出雲大社）', sub: '12/5 週六・行程第 10 站',
-                    tip: '首選「羽根屋 本店」已排進行程；排太久就直接開去出雲大社門前吃，下面三間都在大社走路 5 分鐘內。',
+                    head: 'Day 2 午餐｜出雲（松江城 → 界 出雲）', sub: '12/5 週六・行程第 10 站',
+                    tip: '首選「羽根屋 本店」，到了先寫名字候位；週六排太久就往界出雲方向開，在出雲大社門前吃。',
                     items: [
-                        { name: '献上そば 羽根屋 本店', zh: '首選・出雲蕎麥麵', desc: '必點「三段割子そば」。到了先派 1 人進門口寫名字候位。', hours: '中午時段・依現場為準', q: '献上そば 羽根屋 本店', jp: 'soba' },
-                        { name: 'そば 荒木屋', zh: '備案・江戶時代老店', desc: '割子蕎麥 3 段約 ¥930，賣完就收。', hours: '11:00–16:00（賣完為止）', q: 'そば 荒木屋 出雲大社' },
-                        { name: 'そば処 田中屋 本店', zh: '備案・大社正門前', desc: '石臼磨粉的出雲蕎麥，就在出雲大社鳥居旁。', hours: '11:00–16:00（週四可能公休）', q: 'そば処 田中屋 出雲大社' },
-                        { name: '本格手打蕎麦 出雲 砂屋', zh: '備案・十割蕎麥', desc: '神門通入口附近，營業到比較晚。', hours: '10:00–17:00', q: '出雲 砂屋 神門通り' }
+                        { name: '献上そば 羽根屋 本店', zh: '首選・出雲蕎麥麵', desc: '必點「三段割子そば」。到了先派 1 人進門口寫名字候位。', hours: '11:00–15:00・無休（賣完為止）', tel: '0853-21-0058', q: '献上そば 羽根屋 本店', jp: 'soba' },
+                        { name: 'そば 荒木屋', zh: '備案・江戶時代老店', desc: '割子蕎麥 3 段約 ¥930，賣完就收。', hours: '11:00–16:00（賣完為止）', q: 'そば 荒木屋 出雲大社' }
                     ]
                 },
                 {
                     head: 'Day 2 晚餐｜界 出雲', sub: '12/5 週六・飯店會席料理',
-                    tip: '晚餐在飯店吃冬季松葉蟹會席，不用另外找餐廳。',
+                    tip: '晚餐在飯店吃會席料理（基本專案應是福神會席；冬季蟹會席要另外升級，Check-in 時可問），不用另外找餐廳。',
                     items: []
                 },
                 {
-                    head: 'Day 3 午餐｜柯南小鎮（北榮町）', sub: '12/6 週日・行程第 14 站',
+                    head: 'Day 3 午餐｜出雲大社門前（神門通り）', sub: '12/6 週日・行程第 14 站',
+                    tip: '車停著走路吃。想再吃割子蕎麥就選荒木屋或田中屋，想換口味也有其他選擇。',
                     items: [
-                        { name: '喫茶ポアロ（コナンの家 米花商店街）', zh: '柯南主題咖啡廳', desc: '動畫裡的「白羅咖啡廳」，吃主題輕食、拍照打卡。', hours: '依商店街營業時間', q: 'コナンの家 米花商店街' },
-                        { name: '香味徳 由良本店', zh: '鳥取名物・牛骨拉麵', desc: '由良站（柯南站）走路 3 分鐘的老店，湯頭是牛骨熬的，鳥取才吃得到。', hours: '11:00–14:00、17:00–20:00（週一、國定假日休）', tel: '0858-37-4933', q: '香味徳 由良店' },
-                        { name: '土蔵蕎麦', zh: '倉吉・白壁土藏群旁', desc: '去梨記念館順路，60 年以上的手打蕎麥老店。', hours: '營業時間請先確認', q: '土蔵蕎麦 倉吉' }
+                        { name: 'そば 荒木屋', zh: '江戶時代老店・割子蕎麥', desc: '割子蕎麥 3 段約 ¥930，賣完就收。', hours: '11:00–16:00（賣完為止）', q: 'そば 荒木屋 出雲大社' },
+                        { name: 'そば処 田中屋 本店', zh: '大社正門前・割子蕎麥', desc: '石臼磨粉的出雲蕎麥，就在出雲大社鳥居旁。', hours: '11:00–16:00（週四可能公休）', q: 'そば処 田中屋 出雲大社' },
+                        { name: '本格手打蕎麦 出雲 砂屋', zh: '十割蕎麥', desc: '神門通入口附近，10:00 就開。', hours: '10:00–17:00', q: '出雲 砂屋 神門通り' },
+                        { name: '神門通り', zh: '出雲大社參道商店街', desc: '不想再吃蕎麥麵的話，整條街有ぜんざい（紅豆湯）、仙貝、咖啡廳等小吃可以邊走邊吃。', q: '神門通り 出雲大社' }
                     ]
                 },
                 {
                     head: 'Day 3 晚餐｜米子（住：Super Hotel 米子駅前）', sub: '12/6 週日',
-                    tip: '這晚是週日，有些居酒屋公休；下面都是週日有開的。停好車走路去最輕鬆。',
+                    tip: '這晚是週日，有些居酒屋公休；下面都是週日有開的。車停在飯店開不出來，都在米子站走路範圍內。',
                     items: [
-                        { name: 'かに・郷土料理 海王', zh: '松葉蟹專門店', desc: '活松葉蟹、紅楚蟹、鳥取和牛涮涮鍋。想吃整隻螃蟹選這間。', hours: '營業時間請先打電話確認', q: 'かに・郷土料理 海王 米子', jp: 'crab_meat' },
                         { name: '三代目網元 魚鮮水産 米子駅前店', zh: '海鮮居酒屋', desc: '米子站走路 2 分鐘，生魚片、壽司、螃蟹、岩牡蠣，當天就能訂位。', hours: '17:00–23:00', q: '魚鮮水産 米子駅前店' },
                         { name: '美酒佳肴 ゆらく', zh: '和食居酒屋', desc: '米子站走路 3 分鐘，招牌是鯖魚涮涮鍋（鯖しゃぶ）。', hours: '16:30–24:00', q: '美酒佳肴 ゆらく 米子' }
                     ]
@@ -1619,8 +1689,8 @@
                 {
                     head: '🛍️ 唐吉訶德', sub: '藥妝、零食、伴手禮一次買齊・可退稅',
                     items: [
-                        { name: 'MEGAドン・キホーテ 米子店', zh: '山陰最大的唐吉訶德', desc: '2024 年開幕。Day 3 晚上住米子，晚餐後開車約 10 分鐘就到，開到半夜。', hours: '9:00–24:00・無休', q: 'MEGAドン・キホーテ米子店' },
-                        { name: 'MEGAドン・キホーテ 出雲店', zh: '出雲市區', desc: 'Day 2 在出雲時順路可以去（出雲市姬原 2 丁目）。', hours: '營業時間請先確認', q: 'MEGAドン・キホーテ 出雲店' }
+                        { name: 'MEGAドン・キホーテ 米子店', zh: '山陰最大的唐吉訶德', desc: '2024 年開幕。Day 3 飯店停車場停進去就開不出來，想去的話搭計程車約 10 分鐘，或進飯店前先繞過去。', hours: '9:00–24:00・無休', q: 'MEGAドン・キホーテ米子店' },
+                        { name: 'MEGAドン・キホーテ 出雲店', zh: '出雲市區', desc: 'Day 3 吃完羽根屋往大山開之前順路（出雲市姬原 2 丁目）。', hours: '營業時間請先確認', q: 'MEGAドン・キホーテ 出雲店' }
                     ]
                 },
                 {
@@ -1630,7 +1700,7 @@
                     ]
                 },
                 {
-                    head: '🏔️ mont-bell 大山直營店', sub: '大山登山口・米子開車約 40 分鐘',
+                    head: '🏔️ mont-bell 大山直營店', sub: '已排進 Day 3 行程・米子開車約 40 分鐘',
                     items: [
                         { name: 'モンベル 大山店', zh: 'mont-bell 直營店', desc: '在大山寺橋旁，旁邊是 mont-bell 經營的「大山參道市場」，還能順便看大山雪景。', hours: '10:00–18:00・無休（官網）', tel: '0859-52-2511', q: 'モンベル 大山店' }
                     ]
@@ -1645,9 +1715,10 @@
             ],
             spot: [
                 {
-                    head: 'Day 1｜境港', sub: '晚上還有力氣再出門的話',
+                    head: 'Day 1｜境港', sub: '飯店附近',
                     items: [
-                        { name: '水木しげるロード', zh: '水木茂之路（鬼太郎妖怪街）', desc: '離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。', q: '水木しげるロード' }
+                        { name: '水木しげるロード', zh: '水木茂之路（鬼太郎妖怪街）', desc: '離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。', q: '水木しげるロード' },
+                        { name: '境港水産物直売センター', zh: '境港水產物直賣中心', desc: '離野乃開車約 10 分鐘，紅楚蟹、干貨、魚板等海鮮伴手禮，店家多半可冷藏宅配；中心內的「海陽亭」10:30–16:00 可以吃海鮮丼（週二休）。', q: '境港水産物直売センター' }
                     ]
                 },
                 {
@@ -1659,9 +1730,8 @@
                     ]
                 },
                 {
-                    head: 'Day 3｜倉吉・米子', sub: '順路或晚上的選擇',
+                    head: 'Day 3｜米子・大山', sub: '順路或晚上的選擇',
                     items: [
-                        { name: '倉吉 白壁土蔵群', zh: '白壁土藏群老街', desc: '梨記念館附近，紅瓦白牆的老街，有小店和咖啡廳。', q: '倉吉 白壁土蔵群' },
                         { name: 'とっとり花回廊 イルミネーション', zh: '鳥取花迴廊 冬季點燈', desc: '冬季晚上約 100 萬顆燈。去年是 17:30–21:00、週二休園；今年日期與票價出發前要再查。', q: 'とっとり花回廊' },
                         { name: '皆生温泉', zh: '皆生溫泉', desc: '米子市區的海邊溫泉街，有不住宿也能泡的溫泉。', q: '皆生温泉' },
                         { name: '米子城跡', zh: '米子城跡', desc: '爬 15 分鐘到頂，可以看到米子市區、中海和大山。', q: '米子城跡' }
@@ -1670,8 +1740,9 @@
                 {
                     head: '想多跑一點（車程較遠）', sub: '',
                     items: [
-                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: '米子開車約 30 分鐘（安來市），庭園連續多年被評為日本第一。', q: '足立美術館' },
-                        { name: '大山', zh: '大山（伯耆富士）', desc: '可以跟 mont-bell 大山店一起排，冬天有機會看到雪景。', q: '大山寺 鳥取' }
+                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: 'Day 3 從出雲回米子的路上（安來市），庭園連續 20 多年被評為日本第一；10–3 月開到 17:00，門票約 ¥2,500/人。', q: '足立美術館' },
+                        { name: '大山', zh: '大山（伯耆富士）', desc: '12 月初桝水高原的天空纜椅已停駛（只開 4–11 月），滑雪場纜車約 12/20 才開；想看大山雪景可以開到桝水高原停車場遠眺。', q: '桝水高原' },
+                        { name: '萬九千神社', zh: '萬九千神社（神在月送神）', desc: '這次行程拿掉了。Day 3 從出雲大社去羽根屋時順路（約 10 分鐘），早上出雲大社拜得快的話可以補。', q: '万九千神社' }
                     ]
                 }
             ]
@@ -1752,6 +1823,33 @@
             }
         }
 
+        // 小幫手：找「下一站」（旅行當天看現在時間；其他日子就是當天第一個要去的地方）
+        function getShibaNextStop() {
+            const stops = itineraryData[currentDay]?.stops || [];
+            if (!stops.length) return null;
+            let i;
+            if (getTodayTripDay() === currentDay) i = Math.min(getNextStopIndex(currentDay) + 1, stops.length - 1);
+            else i = stops.length > 1 ? 1 : 0;
+            return stops[i];
+        }
+        function updateShibaNextLabel() {
+            const el = document.getElementById('shiba-next-label');
+            const st = getShibaNextStop();
+            if (el) el.innerText = st ? `下一站：${st.time ? st.time + ' ' : ''}${st.name}` : '今天沒有行程';
+        }
+        function shibaNavNext() {
+            const st = getShibaNextStop();
+            if (!st) return;
+            const dest = st.mapQuery || st.address || st.name;
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}&travelmode=driving`, '_blank', 'noopener');
+        }
+        function shibaCopyNextTel() {
+            const st = getShibaNextStop();
+            if (!st) return;
+            if (st.tel) copyText(st.tel, `${st.name} 電話`);
+            else showToast('這站沒有電話，請用「導航下一站」');
+        }
+
         function toggleShibaPopover(forceState) {
             const pop = document.getElementById('shiba-popover');
             const dot = document.getElementById('shiba-notif-dot');
@@ -1759,6 +1857,7 @@
             const nextState = typeof forceState === 'boolean' ? forceState : isHidden;
 
             if (nextState) {
+                updateShibaNextLabel();
                 pop.classList.remove('hidden');
                 document.getElementById('shiba-fab-btn')?.classList.remove('fab-collapsed');
                 if (dot) dot.classList.add('hidden');
