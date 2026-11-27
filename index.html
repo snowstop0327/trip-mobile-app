@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=13">
+    <link rel="stylesheet" href="css/app.css?v=15">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -400,6 +400,9 @@
                         </div>
                     </div>
 
+                    <!-- Google Sheet 同步 -->
+                    <div id="sheet-sync-box" class="pixel-box-cream p-3 space-y-2"></div>
+
                     <!-- Customize 4 Member Names -->
                     <div class="pixel-box-cream p-3">
                         <div class="text-sm font-bold mb-2 pixel-font text-[#4A2E1B]">👥 設定 4 位旅伴暱稱 (點選直接修改)：</div>
@@ -410,7 +413,7 @@
 
                     <!-- Add New Expense Form -->
                     <div class="pixel-box p-3.5 space-y-3">
-                        <h4 class="font-bold text-sm pixel-font text-[#D63E2F]">➕ 新增一筆旅費 (自動存入手機)</h4>
+                        <h4 class="font-bold text-sm pixel-font text-[#D63E2F]">➕ 新增一筆旅費</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <input id="exp-title" type="text" placeholder="項目 (如: 羽根屋蕎麥麵)" class="border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-bold focus:outline-none">
                             <div class="flex gap-2">
@@ -724,6 +727,6 @@
 
     </div>
 
-    <script src="js/app.js?v=13"></script>
+    <script src="js/app.js?v=15"></script>
 </body>
 </html>

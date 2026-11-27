@@ -1359,14 +1359,17 @@
             `).join('');
 
             updateExpenseUI();
+            renderSheetSync();
         }
 
         function updateMemberName(idx, newName) {
             if (!newName.trim()) return;
             members[idx] = newName.trim();
             localStorage.setItem('sanin_members_v2', JSON.stringify(members));
+            try { localStorage.setItem('sanin_sheet_members_dirty_v1', '1'); } catch (e) {}
             renderMembersAndExpenses();
             showToast("已更新旅伴暱稱！");
+            syncSheet();
         }
 
         function addExpense() {
@@ -1384,18 +1387,15 @@
                 return;
             }
 
-            expenses.unshift({
-                id: Date.now(),
-                title,
-                amount,
-                currency,
-                payer
-            });
+            const exp = { id: Date.now(), date: todayStr(), title, amount, currency, payer };
+            expenses.unshift(exp);
             localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
             titleEl.value = '';
             amountEl.value = '';
             updateExpenseUI();
             showToast("💰 已新增記帳汪！");
+            queueSheetOp({ op: 'add', exp: sheetExp(exp) });
+            syncSheet();
         }
 
         function deleteExpense(id) {
@@ -1403,7 +1403,140 @@
             localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
             updateExpenseUI();
             showToast("已刪除該筆帳目");
+            queueSheetOp({ op: 'del', id: String(id) });
+            syncSheet();
         }
+
+        // ==================== Google Sheet 同步 ====================
+        // 同步網址（Apps Script 網頁應用程式）只存在這支手機，不寫進公開的程式碼。
+        // 新增／刪除先排進佇列，有網路就送到試算表，再把整本帳抓回來，4 支手機看到同一本。
+        const SHEET_URL_KEY = 'sanin_sheet_url_v1';
+        const SHEET_QUEUE_KEY = 'sanin_sheet_queue_v1';
+        const DEFAULT_MEMBERS = ["我(領隊)", "旅伴A", "旅伴B", "旅伴C"];
+        const EXP_DATE_BY_ID = { 1: '2026/12/04', 9001: '2026/12/04', 9002: '2026/12/05', 9003: '2026/12/06' };
+        let sheetSyncing = false, sheetLastTry = 0, sheetStatus = '';
+
+        function todayStr() {
+            const d = new Date();
+            return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function expDate(e) {
+            if (e.date) return e.date;
+            if (EXP_DATE_BY_ID[e.id]) return EXP_DATE_BY_ID[e.id];
+            if (Number(e.id) > 1e12) { const d = new Date(Number(e.id)); return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`; }
+            return '';
+        }
+        function sheetExp(e) {
+            return { id: String(e.id), date: expDate(e), title: e.title, amount: e.amount, currency: e.currency === 'TWD' ? 'TWD' : 'JPY', payerName: members[e.payer] || members[0] };
+        }
+        function getSheetUrl() { try { return localStorage.getItem(SHEET_URL_KEY) || ''; } catch (e) { return ''; } }
+        function getSheetQueue() { try { return JSON.parse(localStorage.getItem(SHEET_QUEUE_KEY)) || []; } catch (e) { return []; } }
+        function setSheetQueue(q) { try { localStorage.setItem(SHEET_QUEUE_KEY, JSON.stringify(q)); } catch (e) {} }
+        function queueSheetOp(op) { if (!getSheetUrl()) return; const q = getSheetQueue(); q.push(op); setSheetQueue(q); }
+
+        function renderSheetSync() {
+            const box = document.getElementById('sheet-sync-box');
+            if (!box) return;
+            const url = getSheetUrl();
+            const pending = getSheetQueue().length;
+            let sheetLink = '';
+            try { sheetLink = localStorage.getItem('sanin_sheet_link_v1') || ''; } catch (e) {}
+            if (!url) {
+                box.innerHTML = `
+                    <div class="text-sm font-bold text-[#4A2E1B] pixel-font">☁️ 同步到 Google Sheet</div>
+                    <p class="text-xs text-[#6E472B] font-medium">還沒設定。貼上領隊給的同步網址，4 個人記的帳就會寫進同一份試算表。</p>
+                    <button onclick="setupSheetUrl()" class="w-full pixel-btn bg-[#388E3C] text-white font-bold text-sm py-2 pixel-font">🔗 貼上同步網址</button>`;
+                return;
+            }
+            box.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-sm font-bold text-[#4A2E1B] pixel-font">☁️ Google Sheet 同步</div>
+                    <button onclick="setupSheetUrl()" class="text-xs underline text-[#6E472B] font-bold">換網址</button>
+                </div>
+                <p class="text-xs text-[#6E472B] font-medium">${sheetSyncing ? '🔄 同步中…' : esc(sheetStatus || '已設定')}${pending ? `・還有 ${pending} 筆等網路送出` : ''}</p>
+                <div class="grid ${sheetLink ? 'grid-cols-2' : 'grid-cols-1'} gap-2">
+                    <button onclick="syncSheet(true)" class="pixel-btn bg-[#2B5B84] text-white font-bold text-sm py-2 pixel-font">🔄 立即同步</button>
+                    ${sheetLink ? `<a href="${esc(sheetLink)}" target="_blank" rel="noopener" class="pixel-btn bg-white text-[#388E3C] font-bold text-sm py-2 pixel-font text-center">📄 開啟試算表</a>` : ''}
+                </div>`;
+        }
+
+        function setupSheetUrl() {
+            const cur = getSheetUrl();
+            const v = (prompt('貼上同步網址（https://script.google.com/macros/s/…/exec）\n清空再按確定＝取消同步', cur) ?? cur).trim();
+            if (v === cur) return;
+            if (!v) {
+                try { localStorage.removeItem(SHEET_URL_KEY); localStorage.removeItem(SHEET_QUEUE_KEY); } catch (e) {}
+                sheetStatus = '';
+                renderSheetSync();
+                showToast('已取消 Google Sheet 同步');
+                return;
+            }
+            if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(v)) { showToast('⚠️ 網址不對，要是 script.google.com 開頭'); return; }
+            try {
+                localStorage.setItem(SHEET_URL_KEY, v);
+                // 第一次連上：把這支手機現有的帳都送上去（重複的會自動略過）
+                setSheetQueue(expenses.slice().reverse().map(sheetExp).sort((a, b) => (a.date || '9').localeCompare(b.date || '9')).map(exp => ({ op: 'add', exp })));
+                if (members.some((m, i) => m !== DEFAULT_MEMBERS[i])) localStorage.setItem('sanin_sheet_members_dirty_v1', '1');
+            } catch (e) {}
+            syncSheet(true);
+        }
+
+        async function syncSheet(userAsked) {
+            const url = getSheetUrl();
+            if (!url) return;
+            if (sheetSyncing) return;
+            if (!navigator.onLine) { sheetStatus = '📴 沒網路，先存在手機'; renderSheetSync(); if (userAsked) showToast('📴 沒網路，有網路時再同步'); return; }
+            sheetSyncing = true; sheetLastTry = Date.now();
+            renderSheetSync();
+            const sent = getSheetQueue();
+            let membersDirty = false;
+            try { membersDirty = localStorage.getItem('sanin_sheet_members_dirty_v1') === '1'; } catch (e) {}
+            const body = { ops: sent, membersInit: members, rate: getRate() };
+            if (membersDirty) body.members = members;
+            try {
+                const r = await fetch(url, { method: 'POST', body: JSON.stringify(body), redirect: 'follow' });
+                const d = await r.json();
+                if (!d.ok) throw new Error(d.error || 'sheet error');
+                // 送出期間又新增的保留在佇列
+                setSheetQueue(getSheetQueue().slice(sent.length));
+                try { if (membersDirty) localStorage.removeItem('sanin_sheet_members_dirty_v1'); } catch (e) {}
+                if (Array.isArray(d.members) && d.members.length === 4) {
+                    members = d.members.map(String);
+                    localStorage.setItem('sanin_members_v2', JSON.stringify(members));
+                }
+                if (Array.isArray(d.expenses)) {
+                    const fromSheet = d.expenses.map(x => ({
+                        id: /^\d+$/.test(String(x.id)) ? Number(x.id) : String(x.id),
+                        date: x.date || '',
+                        title: x.title,
+                        amount: Number(x.amount) || 0,
+                        currency: x.currency === 'TWD' ? 'TWD' : 'JPY',
+                        payer: Math.max(0, members.indexOf(x.payerName))
+                    })).reverse();
+                    // 還沒送出的新帳先留在手機上
+                    const pendingAdds = getSheetQueue().filter(o => o.op === 'add').map(o => String(o.exp.id));
+                    const pendingDels = new Set(getSheetQueue().filter(o => o.op === 'del').map(o => String(o.id)));
+                    const keep = expenses.filter(e => pendingAdds.includes(String(e.id)));
+                    expenses = keep.concat(fromSheet.filter(e => !pendingAdds.includes(String(e.id)) && !pendingDels.has(String(e.id))));
+                    localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
+                }
+                if (d.sheetUrl) try { localStorage.setItem('sanin_sheet_link_v1', d.sheetUrl); } catch (e) {}
+                const t = new Date();
+                sheetStatus = `✅ ${t.getHours()}:${String(t.getMinutes()).padStart(2, '0')} 已同步・共 ${expenses.length} 筆`;
+                if (userAsked) showToast('✅ 已和 Google Sheet 同步');
+                sheetSyncing = false;
+                renderMembersAndExpenses();
+            } catch (e) {
+                sheetStatus = '⚠️ 同步失敗，稍後會再試';
+                if (userAsked) showToast('⚠️ 同步失敗：檢查網址或網路');
+            } finally {
+                sheetSyncing = false;
+                renderSheetSync();
+            }
+        }
+        // 打開分帳頁時自動同步（30 秒內不重複）
+        function autoSyncSheet() { if (getSheetUrl() && Date.now() - sheetLastTry > 30000) syncSheet(); }
+        window.addEventListener('online', () => { if (getSheetUrl()) syncSheet(); });
 
         // ==================== 最新匯率（日幣 → 台幣）====================
         // 免費、免申請 key 的國際中間價（每天更新）；抓不到就用上次存的值。
@@ -1665,6 +1798,7 @@
         // ==================== 7. NAVIGATION & UI HELPERS ====================
         function switchTab(tabName) {
             const tabs = ['itinerary', 'japanese', 'guide', 'voucher', 'expense'];
+            if (tabName === 'expense') autoSyncSheet();
             const dayBar = document.getElementById('sticky-day-bar');
             if (dayBar) {
                 if (tabName === 'itinerary') {
@@ -1795,6 +1929,14 @@
             ],
             spot: [
                 {
+                    head: '🍁 紅葉（12 月初還有機會）', sub: '依 tenki.jp 11/27 的紅葉狀態挑選',
+                    tip: '山陰大部分紅葉名所 11 月中就過了（大山已落葉）。下面是例年見頃到 12 月上旬、又離路線不遠的地方。出發前再看一次 tenki.jp「島根県の紅葉」最準。',
+                    items: [
+                        { name: '日本庭園 由志園', zh: '首選・紅葉夜間點燈（大根島）', desc: '紅葉點燈到 12/6，12/1 起還有聖誕燈飾。離野乃開車約 20 分鐘（過江島大橋）。Day 1 晚上去：18:20 Check-in 後馬上出發，平日最後入園 19:30，看完再回境港吃晚餐（ヒトトセ L.O. 20:30）。或是 Day 2 白天從美保神社往松江時繞過去，但白天沒有點燈。', hours: '夜間：日落–20:00（平日最後入園 19:30）・夜間門票約 ¥1,600', tel: '0852-76-2255', q: '由志園' },
+                        { name: '安来 清水寺', zh: '三重塔與紅葉', desc: '山陰唯一的三重塔被楓葉包圍，例年見頃 11 月中旬到 12 月上旬，12 月初是尾聲。入山免費，山陰道安來IC 下來約 7 分鐘。Day 3 往大山的路上可以繞，但會多花約 40 分鐘，mont-bell 時間會變趕。', hours: '約 8:30–17:00', tel: '0854-22-2151', q: '安来 清水寺' }
+                    ]
+                },
+                {
                     head: 'Day 1｜境港', sub: '飯店附近',
                     items: [
                         { name: '水木しげるロード', zh: '水木茂之路（鬼太郎妖怪街）', desc: '離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。', q: '水木しげるロード' },
@@ -1833,7 +1975,7 @@
                 {
                     head: '想多跑一點（車程較遠）', sub: '',
                     items: [
-                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: 'Day 3 從出雲回米子的路上（安來市），庭園連續 20 多年被評為日本第一；10–3 月開到 17:00，門票約 ¥2,500/人。', q: '足立美術館' },
+                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: 'Day 3 從出雲回米子的路上（安來市），庭園連續 20 多年被評為日本第一，紅葉例年到 11 月下旬，12 月初可能已經過了；10–3 月開到 17:00，門票約 ¥2,500/人。', q: '足立美術館' },
                         { name: '大山', zh: '大山（伯耆富士）', desc: '12 月初桝水高原的天空纜椅已停駛（只開 4–11 月），滑雪場纜車約 12/20 才開；想看大山雪景可以開到桝水高原停車場遠眺。', q: '桝水高原' },
                         { name: '萬九千神社', zh: '萬九千神社（神在月送神）', desc: '這次行程拿掉了。離出雲大社開車約 15 分鐘，Day 3 早上出雲大社拜得快的話可以補。', q: '万九千神社' }
                     ]
@@ -1904,6 +2046,7 @@
             const checkBtn = document.getElementById('exp-btn-check');
 
             if (sub === 'bill') {
+                autoSyncSheet();
                 billView.classList.remove('hidden');
                 checkView.classList.add('hidden');
                 billBtn.className = "pixel-btn bg-[#E07A2E] text-white py-2.5 font-bold text-base pixel-font";
@@ -2044,6 +2187,7 @@
             refreshFxRate(false);
             renderMembersAndExpenses();
             renderChecklist();
+            autoSyncSheet();
         };
 
         // ==================== 8. 網頁 App：離線快取 ====================
