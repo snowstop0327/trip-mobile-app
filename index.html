@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- 版面樣式（Tailwind 預先編譯，修改 HTML 後要重新 npm run build） -->
-    <link rel="stylesheet" href="css/app.css?v=15">
+    <link rel="stylesheet" href="css/app.css?v=16">
 </head>
 <body class="min-h-screen flex justify-center items-start">
 
@@ -390,7 +390,7 @@
                                 <div id="total-breakdown" class="text-xs text-gray-300 font-mono mt-0.5"></div>
                             </div>
                             <div class="bg-[#2C221E] p-2.5 rounded border border-white/20">
-                                <div class="text-xs text-gray-300">每人平均 (台幣)</div>
+                                <div class="text-xs text-gray-300">平均每人 (台幣)</div>
                                 <div id="per-person-twd" class="text-xl font-mono font-bold text-[#4CAF50]">NT$ 0</div>
                             </div>
                         </div>
@@ -424,6 +424,7 @@
                                 <input id="exp-amount" type="number" inputmode="decimal" placeholder="金額" class="flex-1 min-w-0 border-2 border-[#4A2E1B] rounded px-3 py-2 text-sm bg-[#FFF8E7] font-mono font-bold focus:outline-none">
                             </div>
                         </div>
+                        <div id="exp-split" class="bg-[#FFF8E7] border-2 border-dashed border-[#4A2E1B]/30 rounded p-2"></div>
                         <div class="grid grid-cols-2 gap-2.5">
                             <select id="exp-payer" class="border-2 border-[#4A2E1B] rounded px-2.5 py-2 text-sm bg-[#FFF8E7] font-bold">
                                 <!-- Populated via JS -->
@@ -727,6 +728,6 @@
 
     </div>
 
-    <script src="js/app.js?v=15"></script>
+    <script src="js/app.js?v=16"></script>
 </body>
 </html>

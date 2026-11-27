@@ -1353,6 +1353,7 @@
                     class="border-2 border-[#4A2E1B] rounded px-2 py-1.5 text-sm font-bold text-center bg-white w-full">
             `).join('');
 
+            renderSplitPicker();
             const payerSelect = document.getElementById('exp-payer');
             payerSelect.innerHTML = members.map((m, idx) => `
                 <option value="${idx}">💳 由 ${esc(m)} 先墊款</option>
@@ -1360,6 +1361,34 @@
 
             updateExpenseUI();
             renderSheetSync();
+        }
+
+        // 新增帳時「這筆誰要分」：預設 4 人都選
+        let expSplitSel = [0, 1, 2, 3];
+        function renderSplitPicker() {
+            const box = document.getElementById('exp-split');
+            if (!box) return;
+            const all = expSplitSel.length === members.length;
+            box.innerHTML = `
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-sm font-bold text-[#4A2E1B]">👥 這筆誰要分？</span>
+                    <span class="text-xs font-bold ${all ? 'text-[#388E3C]' : 'text-[#D63E2F]'}">${all ? '4 人平分' : `只有 ${expSplitSel.length} 人分`}</span>
+                </div>
+                <div class="grid grid-cols-4 gap-1.5">
+                    ${members.map((m, i) => {
+                        const on = expSplitSel.includes(i);
+                        return `<button type="button" onclick="toggleSplit(${i})" class="pixel-btn text-xs py-1.5 px-1 font-bold truncate ${on ? 'bg-[#2B5B84] text-white' : 'bg-white text-gray-400 line-through'}">${on ? '✓ ' : ''}${esc(m)}</button>`;
+                    }).join('')}
+                </div>`;
+        }
+        function toggleSplit(i) {
+            if (expSplitSel.includes(i)) {
+                if (expSplitSel.length === 1) { showToast('至少要有 1 個人分汪！'); return; }
+                expSplitSel = expSplitSel.filter(x => x !== i);
+            } else {
+                expSplitSel = [...expSplitSel, i].sort();
+            }
+            renderSplitPicker();
         }
 
         function updateMemberName(idx, newName) {
@@ -1388,6 +1417,9 @@
             }
 
             const exp = { id: Date.now(), date: todayStr(), title, amount, currency, payer };
+            if (expSplitSel.length < members.length) exp.split = expSplitSel.slice();
+            expSplitSel = members.map((m, i) => i);
+            renderSplitPicker();
             expenses.unshift(exp);
             localStorage.setItem('sanin_expenses_v2', JSON.stringify(expenses));
             titleEl.value = '';
@@ -1427,7 +1459,13 @@
             return '';
         }
         function sheetExp(e) {
-            return { id: String(e.id), date: expDate(e), title: e.title, amount: e.amount, currency: e.currency === 'TWD' ? 'TWD' : 'JPY', payerName: members[e.payer] || members[0] };
+            return { id: String(e.id), date: expDate(e), title: e.title, amount: e.amount, currency: e.currency === 'TWD' ? 'TWD' : 'JPY', payerName: members[e.payer] || members[0], split: splitLabel(e) };
+        }
+        function parseSplit(str) {
+            const t = String(str || '').trim();
+            if (!t || t === '全部') return undefined;
+            const idx = [...new Set(t.split(/[、,，\s]+/).map(n => members.indexOf(n.trim())).filter(i => i >= 0))].sort();
+            return idx.length && idx.length < members.length ? idx : undefined;
         }
         function getSheetUrl() { try { return localStorage.getItem(SHEET_URL_KEY) || ''; } catch (e) { return ''; } }
         function getSheetQueue() { try { return JSON.parse(localStorage.getItem(SHEET_QUEUE_KEY)) || []; } catch (e) { return []; } }
@@ -1511,7 +1549,8 @@
                         title: x.title,
                         amount: Number(x.amount) || 0,
                         currency: x.currency === 'TWD' ? 'TWD' : 'JPY',
-                        payer: Math.max(0, members.indexOf(x.payerName))
+                        payer: Math.max(0, members.indexOf(x.payerName)),
+                        split: parseSplit(x.split)
                     })).reverse();
                     // 還沒送出的新帳先留在手機上
                     const pendingAdds = getSheetQueue().filter(o => o.op === 'add').map(o => String(o.exp.id));
@@ -1615,6 +1654,13 @@
         function getRate() { return parseFloat(document.getElementById('fx-rate-input').value) || FX_DEFAULT; }
         function expTwd(e, rate) { return e.currency === 'TWD' ? e.amount : e.amount * rate; }
         function fmtAmount(e) { return e.currency === 'TWD' ? `NT$ ${e.amount.toLocaleString()}` : `¥${e.amount.toLocaleString()}`; }
+        // 這筆誰要分：沒設定＝4 人平分
+        function expSplit(e) {
+            const v = Array.isArray(e.split) ? e.split.filter(i => i >= 0 && i < members.length) : [];
+            return v.length ? [...new Set(v)].sort() : members.map((m, i) => i);
+        }
+        function isAllSplit(e) { return expSplit(e).length === members.length; }
+        function splitLabel(e) { return isAllSplit(e) ? '全部' : expSplit(e).map(i => members[i]).join('、'); }
         function getSplitSummary() {
             const rate = getRate();
             const totalTwd = expenses.reduce((sum, e) => sum + expTwd(e, rate), 0);
@@ -1622,8 +1668,14 @@
             const totalTwdOnly = expenses.filter(e => e.currency === 'TWD').reduce((s2, e) => s2 + e.amount, 0);
             const perPerson = totalTwd / members.length;
             const paid = members.map(() => 0);
-            expenses.forEach(e => { if (paid[e.payer] !== undefined) paid[e.payer] += expTwd(e, rate); });
-            return { rate, totalTwd, totalJpyOnly, totalTwdOnly, perPerson, paid, transfers: computeTransfers(paid, perPerson) };
+            const owed = members.map(() => 0);
+            expenses.forEach(e => {
+                const twd = expTwd(e, rate);
+                if (paid[e.payer] !== undefined) paid[e.payer] += twd;
+                const who = expSplit(e);
+                who.forEach(i => { owed[i] += twd / who.length; });
+            });
+            return { rate, totalTwd, totalJpyOnly, totalTwdOnly, perPerson, paid, owed, transfers: computeTransfers(paid, owed) };
         }
 
         function updateExpenseUI() {
@@ -1638,15 +1690,16 @@
             document.getElementById('per-person-twd').innerText = `NT$ ${r(S.perPerson)}`;
 
             const settlementBox = document.getElementById('settlement-box');
-            settlementBox.innerHTML = `<div class="text-[#F5B041] font-bold mb-1">⚖️ 每人應分攤 NT$ ${r(S.perPerson)}（約 ¥${r(S.perPerson / S.rate)}）：</div>` +
+            settlementBox.innerHTML = `<div class="text-[#F5B041] font-bold mb-1">⚖️ 每個人：已墊／應分攤</div>` +
                 members.map((m, idx) => {
-                    const diff = Math.round(S.paid[idx] - S.perPerson);
+                    const diff = Math.round(S.paid[idx] - S.owed[idx]);
+                    const info = `${esc(m)}（墊 ${r(S.paid[idx])}／分 ${r(S.owed[idx])}）`;
                     if (diff > 0) {
-                        return `<div class="flex justify-between gap-2"><span>🟢 ${esc(m)}（已墊 NT$ ${r(S.paid[idx])}）</span><span class="text-[#4CAF50] font-bold whitespace-nowrap">應收回 NT$ ${diff.toLocaleString()}</span></div>`;
+                        return `<div class="flex justify-between gap-2"><span>🟢 ${info}</span><span class="text-[#4CAF50] font-bold whitespace-nowrap">應收回 NT$ ${diff.toLocaleString()}</span></div>`;
                     } else if (diff < 0) {
-                        return `<div class="flex justify-between gap-2"><span>🔸 ${esc(m)}（已墊 NT$ ${r(S.paid[idx])}）</span><span class="text-[#FF8A80] font-bold whitespace-nowrap">需給出 NT$ ${Math.abs(diff).toLocaleString()}</span></div>`;
+                        return `<div class="flex justify-between gap-2"><span>🔸 ${info}</span><span class="text-[#FF8A80] font-bold whitespace-nowrap">需給出 NT$ ${Math.abs(diff).toLocaleString()}</span></div>`;
                     } else {
-                        return `<div class="flex justify-between"><span>⚪ ${esc(m)}</span><span>剛好結清</span></div>`;
+                        return `<div class="flex justify-between gap-2"><span>⚪ ${info}</span><span>剛好結清</span></div>`;
                     }
                 }).join('') + renderTransfers(S.transfers, S.rate);
 
@@ -1656,6 +1709,7 @@
                     <div class="min-w-0">
                         <div class="font-bold text-sm text-[#4A2E1B]">${esc(e.title)}</div>
                         <div class="text-xs text-[#6E472B] mt-0.5">先墊：<b>${esc(members[e.payer] || '旅伴')}</b>${e.currency === 'TWD' ? '' : ` ｜ 約 NT$ ${r(e.amount * S.rate)}`}</div>
+                        ${isAllSplit(e) ? '' : `<div class="text-xs mt-1"><span class="bg-[#FFF2CC] border border-[#E07A2E] text-[#4A2E1B] rounded px-1.5 py-0.5 font-bold">👥 只有 ${esc(splitLabel(e))} 分</span></div>`}
                     </div>
                     <div class="flex items-center gap-2.5">
                         <span class="font-mono font-black text-base text-[#D63E2F] whitespace-nowrap">${fmtAmount(e)}</span>
@@ -1668,8 +1722,10 @@
         }
 
         // 算出「誰該轉給誰多少」，用最少的轉帳次數結清
-        function computeTransfers(paidByMember, perPerson) {
-            const bal = members.map((m, i) => ({ i, v: Math.round(paidByMember[i] - perPerson) }));
+        // 用每個人的「淨額」（已墊－應分攤）來配對，所以不會有人當中間人轉手：
+        // 例如 C 欠 A、我也欠 A 又被 C 欠，會直接變成 C → A
+        function computeTransfers(paidByMember, owedByMember) {
+            const bal = members.map((m, i) => ({ i, v: Math.round(paidByMember[i] - owedByMember[i]) }));
             const debtors = bal.filter(b => b.v < 0).map(b => ({ ...b, v: -b.v })).sort((a, b) => b.v - a.v);
             const creditors = bal.filter(b => b.v > 0).sort((a, b) => b.v - a.v);
             const out = [];
@@ -1711,12 +1767,12 @@
             catch (e) { showToast('⚠️ 第一次匯出需要網路，請連上網路再試'); return; }
             const S = getSplitSummary();
             const r = v => Math.round(v);
-            const detail = [['項目', '幣別', '金額', '換算台幣', '先墊的人']].concat(
-                expenses.map(e => [e.title, e.currency === 'TWD' ? '台幣' : '日幣', e.amount, r(expTwd(e, S.rate)), members[e.payer] || '旅伴']),
+            const detail = [['項目', '幣別', '金額', '換算台幣', '先墊的人', '誰要分']].concat(
+                expenses.map(e => [e.title, e.currency === 'TWD' ? '台幣' : '日幣', e.amount, r(expTwd(e, S.rate)), members[e.payer] || '旅伴', splitLabel(e)]),
                 [[], ['合計', '', '', r(S.totalTwd), ''], ['匯率', '1 日圓 =', S.rate, '台幣', '']]
             );
             const settle = [['旅伴', '已墊（台幣）', '應分攤（台幣）', '差額（正數＝應收回）']].concat(
-                members.map((m, i) => [m, r(S.paid[i]), r(S.perPerson), r(S.paid[i] - S.perPerson)])
+                members.map((m, i) => [m, r(S.paid[i]), r(S.owed[i]), r(S.paid[i] - S.owed[i])])
             );
             const trans = [['誰轉帳', '轉給誰', '台幣', '約日幣']].concat(
                 S.transfers.map(t => [members[t.from], members[t.to], t.twd, r(t.twd / S.rate)])
@@ -1728,7 +1784,7 @@
                 ws['!cols'] = widths.map(w => ({ wch: w }));
                 XLSX.utils.book_append_sheet(wb, ws, name);
             };
-            add(detail, '明細', [44, 8, 12, 12, 12]);
+            add(detail, '明細', [44, 8, 12, 12, 12, 24]);
             add(settle, '每人結算', [12, 14, 14, 20]);
             add(trans, '轉帳', [12, 12, 12, 12]);
             const d = new Date();
