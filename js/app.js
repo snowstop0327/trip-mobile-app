@@ -1985,55 +1985,50 @@
             ],
             spot: [
                 {
-                    head: '🍁 紅葉（12 月初還有機會）', sub: '依 tenki.jp 11/27 的紅葉狀態挑選',
-                    tip: '山陰大部分紅葉名所 11 月中就過了（大山已落葉）。下面是例年見頃到 12 月上旬、又離路線不遠的地方。出發前再看一次 tenki.jp「島根県の紅葉」最準。',
+                    head: "🍁 紅葉・夜間點燈", tab: "🍁 紅葉", sub: "12 月初還看得到的季節限定",
+                    tip: "山陰大部分紅葉名所 11 月中就過了（大山已落葉）。下面是例年見頃到 12 月上旬、又離路線不遠的地方。出發前再看一次 tenki.jp「島根県の紅葉」最準。",
                     items: [
-                        { name: '日本庭園 由志園', zh: '首選・紅葉夜間點燈（大根島）', desc: '紅葉點燈到 12/6，12/1 起還有聖誕燈飾。離野乃開車約 20 分鐘（過江島大橋）。Day 1 晚上去：18:20 Check-in 後馬上出發，平日最後入園 19:30，看完再回境港吃晚餐（ヒトトセ L.O. 20:30）。或是 Day 2 白天從美保神社往松江時繞過去，但白天沒有點燈。', hours: '夜間：日落–20:00（平日最後入園 19:30）・夜間門票約 ¥1,600', tel: '0852-76-2255', q: '由志園' },
-                        { name: '安来 清水寺', zh: '三重塔與紅葉', desc: '山陰唯一的三重塔被楓葉包圍，例年見頃 11 月中旬到 12 月上旬，12 月初是尾聲。入山免費，山陰道安來IC 下來約 7 分鐘。Day 3 往大山的路上可以繞，但會多花約 40 分鐘，mont-bell 時間會變趕。', hours: '約 8:30–17:00', tel: '0854-22-2151', q: '安来 清水寺' }
+                        {"name":"日本庭園 由志園","zh":"首選・紅葉夜間點燈（大根島）","desc":"紅葉點燈到 12/6，12/1 起還有聖誕燈飾。離野乃開車約 20 分鐘（過江島大橋）。Day 1 晚上去：18:20 Check-in 後馬上出發，平日最後入園 19:30，看完再回境港吃晚餐（ヒトトセ L.O. 20:30）。或是 Day 2 白天從美保神社往松江時繞過去，但白天沒有點燈。","hours":"夜間：日落–20:00（平日最後入園 19:30）・夜間門票約 ¥1,600","tel":"0852-76-2255","q":"由志園","days":[1,2],"area":"松江・宍道湖"},
+                        {"name":"安来 清水寺","zh":"三重塔與紅葉","desc":"山陰唯一的三重塔被楓葉包圍，例年見頃 11 月中旬到 12 月上旬，12 月初是尾聲。入山免費，山陰道安來IC 下來約 7 分鐘。Day 3 往大山的路上可以繞，但會多花約 40 分鐘，mont-bell 時間會變趕。","hours":"約 8:30–17:00","tel":"0854-22-2151","q":"安来 清水寺","days":[3],"area":"大山・安來"},
+                        {"name":"とっとり花回廊 イルミネーション","zh":"鳥取花迴廊 冬季點燈","desc":"冬季晚上約 100 萬顆燈。去年是 17:30–21:00、週二休園；今年日期與票價出發前要再查。","q":"とっとり花回廊","days":[3],"area":"大山・安來"}
                     ]
                 },
                 {
-                    head: 'Day 1｜境港', sub: '飯店附近',
+                    head: "⛩️ 歷史・神社・美術館", tab: "⛩️ 歷史神社", sub: "下雨也能去的室內點也在這",
                     items: [
-                        { name: '水木しげるロード', zh: '水木茂之路（鬼太郎妖怪街）', desc: '離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。', q: '水木しげるロード' },
-                        { name: '境港水産物直売センター', zh: '境港水產物直賣中心', desc: '離野乃開車約 10 分鐘，紅楚蟹、干貨、魚板等海鮮伴手禮，店家多半可冷藏宅配；中心內的「海陽亭」10:30–16:00 可以吃海鮮丼（週二休）。', q: '境港水産物直売センター' }
+                        {"name":"米子城跡","zh":"米子城跡","desc":"爬 15 分鐘到頂，可以看到米子市區、中海和大山。","q":"米子城跡","days":[3,4],"area":"境港・米子"},
+                        {"name":"島根県立古代出雲歴史博物館","zh":"古代出雲歷史博物館","desc":"出雲大社旁邊，室內展館，下雨天的首選備案。","q":"島根県立古代出雲歴史博物館","days":[2,3],"area":"出雲"},
+                        {"name":"萬九千神社","zh":"萬九千神社（神在月送神）","desc":"這次行程拿掉了。離出雲大社開車約 15 分鐘，Day 3 早上出雲大社拜得快的話可以補。","q":"万九千神社","days":[3],"area":"出雲"},
+                        {"name":"足立美術館","zh":"足立美術館（日本庭園第一名）","desc":"Day 3 從出雲回米子的路上（安來市），庭園連續 20 多年被評為日本第一，紅葉例年到 11 月下旬，12 月初可能已經過了；10–3 月開到 17:00，門票約 ¥2,500/人。","q":"足立美術館","days":[3],"area":"大山・安來"}
                     ]
                 },
                 {
-                    head: 'Day 2｜松江・出雲', sub: '時間多出來或下雨時',
+                    head: "♨️ 溫泉", tab: "♨️ 溫泉", sub: "不住宿也能泡",
                     items: [
-                        { name: '島根県立古代出雲歴史博物館', zh: '古代出雲歷史博物館', desc: '出雲大社旁邊，室內展館，下雨天的首選備案。', q: '島根県立古代出雲歴史博物館' },
-                        { name: '玉造温泉', zh: '玉造溫泉（美肌之湯）', desc: '松江往界出雲的路上（約 20 分鐘，可順路）。溫泉街沿著玉湯川有免費足湯，玉作湯神社有「願い石」可以許願；也有不住宿的公共浴場可以泡。', q: '玉造温泉' },
-                        { name: '宍道湖 夕日スポット', zh: '宍道湖夕陽', desc: '日本夕陽百選，松江市區湖邊（嫁ヶ島一帶）。', q: '宍道湖 夕日スポット とるぱ' },
-                        { name: '稲佐の浜', zh: '稻佐之濱', desc: '出雲大社開車 3 分鐘的海邊，弁天島很好拍。', q: '稲佐の浜' }
+                        {"name":"皆生温泉","zh":"皆生溫泉","desc":"米子市區的海邊溫泉街，有不住宿也能泡的溫泉。","q":"皆生温泉","days":[3],"area":"境港・米子"},
+                        {"name":"玉造温泉","zh":"玉造溫泉（美肌之湯）","desc":"松江往界出雲的路上（約 20 分鐘，可順路）。溫泉街沿著玉湯川有免費足湯，玉作湯神社有「願い石」可以許願；也有不住宿的公共浴場可以泡。","q":"玉造温泉","days":[2],"area":"松江・宍道湖"}
                     ]
                 },
                 {
-                    head: 'Day 3｜米子・大山', sub: '順路或晚上的選擇',
+                    head: "🌊 海邊・湖景・散步", tab: "🌊 海邊湖景", sub: "看風景、拍照",
                     items: [
-                        { name: 'とっとり花回廊 イルミネーション', zh: '鳥取花迴廊 冬季點燈', desc: '冬季晚上約 100 萬顆燈。去年是 17:30–21:00、週二休園；今年日期與票價出發前要再查。', q: 'とっとり花回廊' },
-                        { name: '皆生温泉', zh: '皆生溫泉', desc: '米子市區的海邊溫泉街，有不住宿也能泡的溫泉。', q: '皆生温泉' },
-                        { name: '米子城跡', zh: '米子城跡', desc: '爬 15 分鐘到頂，可以看到米子市區、中海和大山。', q: '米子城跡' }
+                        {"name":"水木しげるロード","zh":"水木茂之路（鬼太郎妖怪街）","desc":"離飯店走路就到，177 尊妖怪銅像，晚上有妖怪影子燈，散步消化剛好。","q":"水木しげるロード","days":[1],"area":"境港・米子"},
+                        {"name":"宍道湖 夕日スポット","zh":"宍道湖夕陽","desc":"日本夕陽百選，松江市區湖邊（嫁ヶ島一帶）。","q":"宍道湖 夕日スポット とるぱ","days":[2],"area":"松江・宍道湖"},
+                        {"name":"稲佐の浜","zh":"稻佐之濱","desc":"出雲大社開車 3 分鐘的海邊，弁天島很好拍。","q":"稲佐の浜","days":[2,3],"area":"出雲"},
+                        {"name":"大山","zh":"大山（伯耆富士）","desc":"12 月初桝水高原的天空纜椅已停駛（只開 4–11 月），滑雪場纜車約 12/20 才開；想看大山雪景可以開到桝水高原停車場遠眺。","q":"桝水高原","days":[3],"area":"大山・安來"}
                     ]
                 },
                 {
-                    head: '🛣️ 公路休息站・高速公路', sub: '道之驛（道の駅）在一般道路上，SA 在高速公路上',
-                    tip: '山陰道有些路段免費、有些收費：出雲IC↔松江玉造IC 約 ¥1,080、東出雲IC↔米子西IC 約 ¥680（舊資料，以現場為準）。車上沒插 ETC 卡就走「一般」車道付現金。⚠️ 宍道湖SA 沒有加油站，油要在市區加。',
+                    head: "🛣️ 休息站・直賣所", tab: "🛣️ 休息站", sub: "道之驛（道の駅）在一般道路上，SA 在高速公路上",
+                    tip: "山陰道有些路段免費、有些收費：出雲IC↔松江玉造IC 約 ¥1,080、東出雲IC↔米子西IC 約 ¥680（舊資料，以現場為準）。車上沒插 ETC 卡就走「一般」車道付現金。⚠️ 宍道湖SA 沒有加油站，油要在市區加。",
                     items: [
-                        { name: '道の駅 本庄', zh: 'Day 2 順路・中海湖邊', desc: '美保神社開往松江城、走中海北岸國道 431 號時會經過。面對中海，天氣好時看得到大山。有在地產直賣和輕食，適合上廁所休息一下。', hours: '9:00–18:00（產直奇數月第 3 週二休）', tel: '0852-34-1528', q: '道の駅 本庄 松江' },
-                        { name: '道の駅 秋鹿なぎさ公園', zh: 'Day 2 湖景路線・宍道湖北岸', desc: '松江城往出雲如果不走山陰道、改走宍道湖北岸的國道 431 號，就會經過這裡，可以邊開車邊看湖景。不過比走高速慢一些。', hours: '9:00–21:00・週二休', tel: '0852-88-3700', q: '道の駅 秋鹿なぎさ公園' },
-                        { name: '道の駅 大社ご縁広場', zh: 'Day 3・出雲大社旁', desc: '出雲大社附近的道之驛，有出雲物產館可以買伴手禮。神門通停車場滿了也可以考慮停這邊。', hours: '約 9:00–17:00（各店不同，請先確認）', q: '道の駅 大社ご縁広場' },
-                        { name: '道の駅 キララ多伎', zh: '真正面對日本海・不順路', desc: '在出雲市西邊的海邊，夕陽很美，但離界出雲約 30 分鐘，往反方向，這次行程不順路。', hours: '9:00–18:00（12–2 月）', tel: '0853-86-9080', q: '道の駅 キララ多伎' },
-                        { name: '宍道湖SA', zh: '山陰道收費路段唯一的休息站', desc: '在出雲IC和松江玉造IC之間，兩個方向都有。上廁所、買飲料都可以在這裡；有賣割子蕎麥麵和蜆味噌拉麵，其中一側有看得到宍道湖的餐廳。Day 3 從出雲大社開往大山時會經過。', hours: '便利商店／商店約 8:00–18:00、餐廳約 11:00–15:00（兩側時間不同）', q: '宍道湖サービスエリア' },
-                        { name: '道の駅 あらエッサ', zh: '安來的公路休息站', desc: '米子西IC下來開約 5 分鐘，有農產品、海產直賣和餐廳，廁所 24 小時開。Day 3 時間比較趕，回米子時有空再繞。', hours: '直賣所 9:00–18:00、餐廳 11:00–20:30（週二休）', tel: '0854-23-2510', q: '道の駅 あらエッサ' }
-                    ]
-                },
-                {
-                    head: '想多跑一點（車程較遠）', sub: '',
-                    items: [
-                        { name: '足立美術館', zh: '足立美術館（日本庭園第一名）', desc: 'Day 3 從出雲回米子的路上（安來市），庭園連續 20 多年被評為日本第一，紅葉例年到 11 月下旬，12 月初可能已經過了；10–3 月開到 17:00，門票約 ¥2,500/人。', q: '足立美術館' },
-                        { name: '大山', zh: '大山（伯耆富士）', desc: '12 月初桝水高原的天空纜椅已停駛（只開 4–11 月），滑雪場纜車約 12/20 才開；想看大山雪景可以開到桝水高原停車場遠眺。', q: '桝水高原' },
-                        { name: '萬九千神社', zh: '萬九千神社（神在月送神）', desc: '這次行程拿掉了。離出雲大社開車約 15 分鐘，Day 3 早上出雲大社拜得快的話可以補。', q: '万九千神社' }
+                        {"name":"境港水産物直売センター","zh":"境港水產物直賣中心","desc":"離野乃開車約 10 分鐘，紅楚蟹、干貨、魚板等海鮮伴手禮，店家多半可冷藏宅配；中心內的「海陽亭」10:30–16:00 可以吃海鮮丼（週二休）。","q":"境港水産物直売センター","days":[1,2],"area":"境港・米子"},
+                        {"name":"道の駅 本庄","zh":"Day 2 順路・中海湖邊","desc":"美保神社開往松江城、走中海北岸國道 431 號時會經過。面對中海，天氣好時看得到大山。有在地產直賣和輕食，適合上廁所休息一下。","hours":"9:00–18:00（產直奇數月第 3 週二休）","tel":"0852-34-1528","q":"道の駅 本庄 松江","days":[2],"area":"松江・宍道湖"},
+                        {"name":"道の駅 秋鹿なぎさ公園","zh":"Day 2 湖景路線・宍道湖北岸","desc":"松江城往出雲如果不走山陰道、改走宍道湖北岸的國道 431 號，就會經過這裡，可以邊開車邊看湖景。不過比走高速慢一些。","hours":"9:00–21:00・週二休","tel":"0852-88-3700","q":"道の駅 秋鹿なぎさ公園","days":[2],"area":"松江・宍道湖"},
+                        {"name":"宍道湖SA","zh":"山陰道收費路段唯一的休息站","desc":"在出雲IC和松江玉造IC之間，兩個方向都有。上廁所、買飲料都可以在這裡；有賣割子蕎麥麵和蜆味噌拉麵，其中一側有看得到宍道湖的餐廳。Day 3 從出雲大社開往大山時會經過。","hours":"便利商店／商店約 8:00–18:00、餐廳約 11:00–15:00（兩側時間不同）","q":"宍道湖サービスエリア","days":[2,3],"area":"松江・宍道湖"},
+                        {"name":"道の駅 大社ご縁広場","zh":"Day 3・出雲大社旁","desc":"出雲大社附近的道之驛，有出雲物產館可以買伴手禮。神門通停車場滿了也可以考慮停這邊。","hours":"約 9:00–17:00（各店不同，請先確認）","q":"道の駅 大社ご縁広場","days":[3],"area":"出雲"},
+                        {"name":"道の駅 キララ多伎","zh":"真正面對日本海・不順路","desc":"在出雲市西邊的海邊，夕陽很美，但離界出雲約 30 分鐘，往反方向，這次行程不順路。","hours":"9:00–18:00（12–2 月）","tel":"0853-86-9080","q":"道の駅 キララ多伎","days":[2,3],"area":"出雲"},
+                        {"name":"道の駅 あらエッサ","zh":"安來的公路休息站","desc":"米子西IC下來開約 5 分鐘，有農產品、海產直賣和餐廳，廁所 24 小時開。Day 3 時間比較趕，回米子時有空再繞。","hours":"直賣所 9:00–18:00、餐廳 11:00–20:30（週二休）","tel":"0854-23-2510","q":"道の駅 あらエッサ","days":[3],"area":"大山・安來"}
                     ]
                 }
             ]
@@ -2047,6 +2042,7 @@
                     <div class="min-w-0">
                         <h4 class="font-black text-base text-[#4A2E1B] leading-snug">${esc(it.name)}</h4>
                         <div class="text-xs font-bold text-[#D63E2F]">${esc(it.zh)}</div>
+                        ${it.days ? `<div class="flex flex-wrap gap-1 mt-1">${it.days.map(d => `<span class="text-[11px] font-black text-white bg-[#2B5B84] rounded px-1.5 py-0.5">Day ${d}</span>`).join('')}</div>` : ''}
                     </div>
                     <a href="${nav}" target="_blank" rel="noopener" class="pixel-btn bg-[#388E3C] text-white text-sm px-3 py-1.5 font-bold whitespace-nowrap">導航</a>
                 </div>
@@ -2060,6 +2056,25 @@
             </div>`;
         }
 
+        // 有 area 的（備案景點）在大分類底下再按地區分小節，順序照行程路線
+        const AREA_ORDER = ['境港・米子', '松江・宍道湖', '出雲', '大山・安來'];
+        function renderGuideItems(list) {
+            if (!list.some(i => i.area)) return list.map(renderGuideCard).join('');
+            const areas = [...new Set(list.map(i => i.area))].sort((x, y) => AREA_ORDER.indexOf(x) - AREA_ORDER.indexOf(y));
+            return areas.map(a => `
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-sm font-black text-[#E07A2E]"><span>📍 ${esc(a)}</span><span class="flex-1 border-t-2 border-dotted border-[#E07A2E]/40"></span></div>
+                    ${list.filter(i => i.area === a).map(renderGuideCard).join('')}
+                </div>`).join('');
+        }
+        const AREA_SHORT = { '境港・米子': '境港米子', '松江・宍道湖': '松江', '出雲': '出雲', '大山・安來': '大山安來' };
+        let spotTheme = 'all', spotArea = 'all';
+        function setSpotFilter(kind, val) {
+            if (kind === 'theme') spotTheme = val; else spotArea = val;
+            renderGuide();
+            const f = document.getElementById('spot-filter');
+            if (f && f.getBoundingClientRect().top < 0) f.scrollIntoView({ block: 'start' });
+        }
         function renderGuide() {
             ['food', 'shop', 'spot'].forEach(kind => {
                 const el = document.getElementById(`guide-view-${kind}`);
@@ -2070,14 +2085,36 @@
                         <p class="text-sm text-[#4A2E1B] leading-relaxed font-medium">山陰冬天天黑早、有些店只能現場候位。每餐都放了飯店或景點附近的首選＋備案，進門可以秀「4人入座日文卡」。</p>
                         <button onclick="openFlashcardModal('walkin4')" class="w-full mt-2 pixel-btn bg-[#F5B041] text-[#4A2E1B] font-bold text-sm py-2 pixel-font">🗣️ 秀出「請問 4 位現在有位子嗎？」</button>
                     </div>` : '';
-                el.innerHTML = intro + GUIDE_DATA[kind].map(g => `
+                let groups = GUIDE_DATA[kind];
+                let spotIntro = '';
+                if (kind === 'spot') {
+                    const themeBtn = (val, label) => `<button onclick="setSpotFilter('theme', ${JSON.stringify(val).replace(/"/g, '&quot;')})" class="pixel-btn text-xs py-2 px-1 font-bold ${spotTheme === val ? 'bg-[#E07A2E] text-white' : 'bg-white text-[#4A2E1B]'}">${label}</button>`;
+                    const areaBtn = (val, label) => `<button onclick="setSpotFilter('area', ${JSON.stringify(val).replace(/"/g, '&quot;')})" class="pixel-btn text-xs py-1.5 px-0.5 font-bold ${spotArea === val ? 'bg-[#2B5B84] text-white' : 'bg-white text-[#4A2E1B]'}">${label}</button>`;
+                    spotIntro = `
+                    <div id="spot-filter" class="pixel-box-cream p-3 space-y-2.5">
+                        <div class="grid grid-cols-3 gap-1.5">
+                            ${themeBtn('all', '全部')}
+                            ${groups.map((g, i) => themeBtn(i, esc(g.tab || g.head))).join('')}
+                        </div>
+                        <div class="grid grid-cols-5 gap-1">
+                            ${areaBtn('all', '📍全部')}
+                            ${AREA_ORDER.map(a => areaBtn(a, esc(AREA_SHORT[a]))).join('')}
+                        </div>
+                    </div>`;
+                    groups = groups
+                        .filter((g, i) => spotTheme === 'all' || spotTheme === i)
+                        .map(g => ({ ...g, items: g.items.filter(it => spotArea === 'all' || it.area === spotArea) }))
+                        .filter(g => g.items.length);
+                    if (!groups.length) spotIntro += `<p class="text-sm text-center text-[#6E472B] font-bold py-6">這個地區沒有這類景點，換個分類看看汪！</p>`;
+                }
+                el.innerHTML = intro + spotIntro + groups.map(g => `
                     <div class="pixel-box p-4 space-y-3">
                         <div class="border-b-2 border-dashed border-[#4A2E1B]/20 pb-2">
                             <div class="text-base font-black text-[#2B5B84] pixel-font">${esc(g.head)}</div>
                             ${g.sub ? `<div class="text-xs font-bold text-[#6E472B] mt-0.5">${esc(g.sub)}</div>` : ''}
                         </div>
                         ${g.tip ? `<p class="text-sm text-[#6E472B] font-medium">💡 ${esc(g.tip)}</p>` : ''}
-                        ${g.items.map(renderGuideCard).join('')}
+                        ${renderGuideItems(g.items)}
                     </div>`).join('') + `<p class="text-xs text-[#6E472B] text-center">營業時間為 2026 年 11 月查詢，出發前或到店前建議再看一次 Google 地圖。</p>`;
             });
         }
